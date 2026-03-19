@@ -1,5 +1,5 @@
 -- ============================================================================
--- LoveMarket — Seed Data
+-- Evolve — Seed Data
 -- Run this AFTER migration.sql in the Supabase SQL Editor
 -- ============================================================================
 

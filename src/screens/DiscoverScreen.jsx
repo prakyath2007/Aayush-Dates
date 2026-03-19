@@ -29,6 +29,14 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
   // Compute composite score for current profile
   const compositeScore = currentProfile ? computeCompositeScore(currentProfile.agentScores, AGENTS) : 0;
 
+  // Safe accessor for bankOfUsers
+  const bankOfUsers = currentProfile?.bankOfUsers || {
+    totalLongs: 0,
+    totalShorts: 0,
+    demandScore: 5.0,
+    uniqueViewers: 0,
+  };
+
   // Handle swipe action
   const handleSwipeComplete = useCallback(() => {
     if (!swipeDirection) return;
@@ -86,12 +94,12 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
 
   if (!currentProfile) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-b from-slate-950 to-slate-900">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-b from-[#0a0a12] to-slate-900">
         <div className="text-center">
-          <p className="text-cyan-400 mb-4">No more profiles available</p>
+          <p className="text-[#3ecfcf] mb-4">No more profiles available</p>
           <button
             onClick={() => setCurrentIndex(0)}
-            className="px-6 py-2 bg-gradient-to-r from-pink-500 to-cyan-500 rounded-lg text-white font-semibold hover:opacity-90 transition"
+            className="px-6 py-2 bg-gradient-to-r from-[#e8475f] to-[#3ecfcf] rounded-lg text-white font-semibold hover:opacity-90 transition"
           >
             Start Over
           </button>
@@ -101,11 +109,11 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto bg-gradient-to-b from-slate-950 to-slate-900 min-h-screen flex flex-col pb-4">
+    <div className="w-full max-w-md mx-auto bg-gradient-to-b from-[#0a0a12] to-slate-900 min-h-screen flex flex-col pb-4">
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2 relative z-20">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-transparent">
-          Discover
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-[#e8475f] to-[#3ecfcf] bg-clip-text text-transparent">
+          Evolve
         </h1>
         <div className="flex items-center gap-2">
           <TokenDisplay tokens={tokens} />
@@ -120,7 +128,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
               key={idx}
               className={`h-1 rounded-full transition-all ${
                 idx === currentIndex % 3
-                  ? 'w-6 bg-gradient-to-r from-pink-500 to-cyan-500'
+                  ? 'w-6 bg-gradient-to-r from-[#e8475f] to-[#3ecfcf]'
                   : 'w-2 bg-slate-700'
               }`}
             />
@@ -144,7 +152,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
             const profile = profiles[index];
             const isActive = offset === 0;
             const scale = 1 - offset * 0.03;
-            const yOffset = offset * 8;
+            const yOffset = offset * 6;
 
             return (
               <div
@@ -182,13 +190,13 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
           {swipeFeedback && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
               <div
-                className={`text-6xl font-bold font-serif tracking-wider ${
+                className={`text-5xl font-bold tracking-wide ${
                   swipeFeedback === 'LONG'
-                    ? 'text-green-400 drop-shadow-[0_0_20px_rgba(0,255,136,0.5)]'
-                    : 'text-pink-500 drop-shadow-[0_0_20px_rgba(255,45,120,0.5)]'
+                    ? 'text-[#34d399] drop-shadow-[0_0_30px_rgba(52,211,153,0.4)]'
+                    : 'text-[#e8475f] drop-shadow-[0_0_30px_rgba(232,71,95,0.4)]'
                 } animate-pulse`}
               >
-                {swipeFeedback === 'LONG' ? '↗ LONG' : '↙ SHORT'}
+                {swipeFeedback === 'LONG' ? 'Invest ↗' : 'Short ↙'}
               </div>
             </div>
           )}
@@ -201,7 +209,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
         <button
           onClick={handlePass}
           disabled={isLoading}
-          className="flex-1 py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700 disabled:opacity-50 transition border border-slate-700 hover:border-pink-500/40 text-base font-bold text-slate-300 hover:text-pink-400 active:scale-95"
+          className="flex-1 py-4 rounded-2xl bg-slate-800/50 hover:bg-slate-800 disabled:opacity-50 transition border border-slate-700 hover:border-[#e8475f]/40 text-base font-bold text-slate-300 hover:text-[#e8475f] active:scale-95"
         >
           Pass
         </button>
@@ -210,7 +218,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
         <button
           onClick={() => setShowAnalysis(true)}
           disabled={isLoading}
-          className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-[#00d4ff] to-[#a855f7] hover:opacity-90 disabled:opacity-50 transition text-white font-bold text-base flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-cyan-500/20"
+          className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-[#3ecfcf] to-[#a855f7] hover:opacity-90 disabled:opacity-50 transition text-white font-bold text-base flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-[#3ecfcf]/20"
         >
           <TrendingUp size={18} />
           Trade
@@ -221,8 +229,8 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
       <BottomSheet
         isOpen={showAnalysis}
         onClose={() => setShowAnalysis(false)}
-        title="She Into You?"
-        className="bg-slate-900 border-t border-cyan-500/20"
+        title="Market Analysis"
+        className="bg-slate-900 border-t border-[#3ecfcf]/20"
       >
         <div className="space-y-6 pb-8">
           {/* Loading State */}
@@ -230,9 +238,9 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
             <div className="text-center py-8">
               <div className="mb-4 flex justify-center">
                 <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                  <div className="w-2 h-2 bg-[#3ecfcf] rounded-full animate-bounce" />
+                  <div className="w-2 h-2 bg-[#3ecfcf] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                  <div className="w-2 h-2 bg-[#3ecfcf] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                 </div>
               </div>
               <p className="text-slate-300 text-sm">Analyzing attraction signals...</p>
@@ -247,7 +255,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                   <CircularGauge score={compositeScore} label="Attraction Index" />
                 </div>
                 <p className="text-sm text-slate-400">
-                  <span className="font-semibold" style={{ color: compositeScore >= 70 ? '#00ff88' : compositeScore >= 50 ? '#ffd700' : '#ff2d78' }}>
+                  <span className="font-semibold" style={{ color: compositeScore >= 70 ? '#34d399' : compositeScore >= 50 ? '#f0b429' : '#e8475f' }}>
                     {compositeScore.toFixed(0)}%
                   </span>
                   {' match probability'}
@@ -255,8 +263,8 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
               </div>
 
               {/* Price Chart */}
-              <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-4 border border-cyan-500/10">
-                <h3 className="text-sm font-semibold text-cyan-400 mb-3">Price Action</h3>
+              <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-4 border border-[#3ecfcf]/10">
+                <h3 className="text-sm font-semibold text-[#3ecfcf] mb-3">Price Action</h3>
                 <div className="h-40 bg-slate-900/50 rounded-lg overflow-hidden border border-slate-700/50">
                   <PriceChart priceHistory={currentProfile.priceHistory} />
                 </div>
@@ -267,7 +275,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                   </div>
                   <div
                     className={`text-right ${
-                      currentProfile.priceChangePct >= 0 ? 'text-green-400' : 'text-pink-500'
+                      currentProfile.priceChangePct >= 0 ? 'text-[#34d399]' : 'text-[#e8475f]'
                     }`}
                   >
                     <p className="text-xs text-slate-500">24h Change</p>
@@ -280,8 +288,8 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
               </div>
 
               {/* Bank of Users Stats */}
-              <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-4 border border-cyan-500/10">
-                <h3 className="text-sm font-semibold text-cyan-400 mb-4 flex items-center gap-2">
+              <div className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-4 border border-[#3ecfcf]/10">
+                <h3 className="text-sm font-semibold text-[#3ecfcf] mb-4 flex items-center gap-2">
                   <Users size={16} />
                   Bank of Users
                 </h3>
@@ -291,18 +299,18 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-1">
                         <span className="text-xs text-slate-400">Longs</span>
-                        <span className="text-sm font-semibold text-green-400">
-                          {currentProfile.bankOfUsers.totalLongs}
+                        <span className="text-sm font-semibold text-[#34d399]">
+                          {bankOfUsers.totalLongs}
                         </span>
                       </div>
                       <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all"
+                          className="h-full bg-[#34d399] transition-all"
                           style={{
                             width: `${
-                              (currentProfile.bankOfUsers.totalLongs /
-                                (currentProfile.bankOfUsers.totalLongs +
-                                  currentProfile.bankOfUsers.totalShorts)) *
+                              (bankOfUsers.totalLongs /
+                                (bankOfUsers.totalLongs +
+                                  bankOfUsers.totalShorts)) *
                               100
                             }%`,
                           }}
@@ -312,18 +320,18 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-1">
                         <span className="text-xs text-slate-400">Shorts</span>
-                        <span className="text-sm font-semibold text-pink-400">
-                          {currentProfile.bankOfUsers.totalShorts}
+                        <span className="text-sm font-semibold text-[#ef4444]">
+                          {bankOfUsers.totalShorts}
                         </span>
                       </div>
                       <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-pink-500 to-red-400 transition-all"
+                          className="h-full bg-[#ef4444] transition-all"
                           style={{
                             width: `${
-                              (currentProfile.bankOfUsers.totalShorts /
-                                (currentProfile.bankOfUsers.totalLongs +
-                                  currentProfile.bankOfUsers.totalShorts)) *
+                              (bankOfUsers.totalShorts /
+                                (bankOfUsers.totalLongs +
+                                  bankOfUsers.totalShorts)) *
                               100
                             }%`,
                           }}
@@ -336,15 +344,15 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                   <div>
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-xs text-slate-400">Demand Score</span>
-                      <span className="text-sm font-semibold text-cyan-400">
-                        {currentProfile.bankOfUsers.demandScore.toFixed(1)}
+                      <span className="text-sm font-semibold text-[#3ecfcf]">
+                        {bankOfUsers.demandScore.toFixed(1)}
                       </span>
                     </div>
                     <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-cyan-500 to-blue-400 transition-all"
+                        className="h-full bg-[#3ecfcf] transition-all"
                         style={{
-                          width: `${Math.min((currentProfile.bankOfUsers.demandScore / 10) * 100, 100)}%`,
+                          width: `${Math.min((bankOfUsers.demandScore / 10) * 100, 100)}%`,
                         }}
                       />
                     </div>
@@ -354,14 +362,14 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-700">
                     <div className="bg-slate-900/50 rounded-lg p-2 text-center">
                       <p className="text-xs text-slate-500">Unique Viewers</p>
-                      <p className="text-lg font-bold text-cyan-400">
-                        {currentProfile.bankOfUsers.uniqueViewers}
+                      <p className="text-lg font-bold text-[#3ecfcf]">
+                        {bankOfUsers.uniqueViewers}
                       </p>
                     </div>
                     <div className="bg-slate-900/50 rounded-lg p-2 text-center">
                       <p className="text-xs text-slate-500">Market Cap</p>
-                      <p className="text-lg font-bold text-pink-400">
-                        {formatPrice(currentProfile.currentPrice * (currentProfile.bankOfUsers.totalLongs + 50))}
+                      <p className="text-lg font-bold text-[#e8475f]">
+                        {formatPrice(currentProfile.currentPrice * (bankOfUsers.totalLongs + 50))}
                       </p>
                     </div>
                   </div>
@@ -370,7 +378,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
 
               {/* AI Agent Cards */}
               <div>
-                <h3 className="text-sm font-semibold text-cyan-400 mb-3">AI Agent Analysis</h3>
+                <h3 className="text-sm font-semibold text-[#3ecfcf] mb-3">AI Agent Analysis</h3>
                 <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-800">
                   {AGENTS.map((agent, idx) => {
                     const agentScore = currentProfile.agentScores[agent.id];
@@ -409,7 +417,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                       }, 600);
                     }}
                     disabled={tokens < 100}
-                    className="flex-1 py-4 rounded-xl bg-gradient-to-r from-pink-600 to-red-600 hover:opacity-90 disabled:opacity-40 transition text-white font-bold text-base flex items-center justify-center gap-2 active:scale-95"
+                    className="flex-1 py-4 rounded-xl bg-gradient-to-r from-[#e8475f] to-[#ef4444] hover:opacity-90 disabled:opacity-40 transition text-white font-bold text-base flex items-center justify-center gap-2 active:scale-95"
                   >
                     <TrendingDown size={18} />
                     Short
@@ -428,7 +436,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
                       }, 600);
                     }}
                     disabled={tokens < 100}
-                    className="flex-1 py-4 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:opacity-90 disabled:opacity-40 transition text-white font-bold text-base flex items-center justify-center gap-2 active:scale-95"
+                    className="flex-1 py-4 rounded-xl bg-gradient-to-r from-[#34d399] to-[#3ecfcf] hover:opacity-90 disabled:opacity-40 transition text-white font-bold text-base flex items-center justify-center gap-2 active:scale-95"
                   >
                     <TrendingUp size={18} />
                     Long
@@ -441,7 +449,7 @@ const DiscoverScreen = ({ profiles = [], tokens, onTrade, onPass }) => {
       </BottomSheet>
 
       {/* Animation Styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes slideInUp {
           from {
             opacity: 0;

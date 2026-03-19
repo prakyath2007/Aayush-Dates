@@ -113,23 +113,23 @@ const PortfolioScreen = ({
   }, [positions]);
 
   return (
-    <div className="min-h-screen bg-[#06060b] text-white">
+    <div className="min-h-screen bg-[#0a0a12] text-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-gradient-to-b from-[#06060b] via-[#06060b] to-transparent px-4 pt-4 pb-3">
+      <div className="sticky top-0 z-10 bg-gradient-to-b from-[#0a0a12] via-[#0a0a12] to-transparent px-4 pt-4 pb-3">
         <h1 className="text-2xl font-bold">Portfolio</h1>
         <p className="text-sm text-gray-400 mt-1">Track your positions</p>
       </div>
 
       <div className="px-4 pb-20">
         {/* Portfolio Summary Card */}
-        <div className="mb-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 p-5 space-y-4">
+        <div className="mb-6 rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#0f0f1a] to-[#0a0a12] backdrop-blur-xl border border-white/8 p-5 space-y-4 shadow-2xl">
           {/* Top row: Value and Tokens */}
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1 font-medium">
                 Portfolio Value
               </p>
-              <p className="text-3xl font-bold font-mono">
+              <p className="text-3xl font-bold font-mono text-white">
                 {formatPrice(portfolioSummary.totalValue)}
               </p>
             </div>
@@ -137,20 +137,20 @@ const PortfolioScreen = ({
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
           {/* Bottom row: Unrealized P&L and Invested */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1 font-medium">
                 Unrealized P&L
               </p>
               <div className="flex items-center gap-2">
                 <p
                   className={`text-xl font-bold font-mono ${
                     portfolioSummary.totalUnrealized >= 0
-                      ? 'text-[#00ff88]'
-                      : 'text-[#ff2d78]'
+                      ? 'text-[#34d399]'
+                      : 'text-[#ef4444]'
                   }`}
                 >
                   {formatPrice(portfolioSummary.totalUnrealized)}
@@ -158,8 +158,8 @@ const PortfolioScreen = ({
                 <span
                   className={`text-sm font-mono ${
                     portfolioSummary.unrealizedPct >= 0
-                      ? 'text-[#00ff88]'
-                      : 'text-[#ff2d78]'
+                      ? 'text-[#34d399]'
+                      : 'text-[#ef4444]'
                   }`}
                 >
                   {formatPct(portfolioSummary.unrealizedPct)}
@@ -168,10 +168,10 @@ const PortfolioScreen = ({
             </div>
 
             <div>
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1 font-medium">
                 Total Invested
               </p>
-              <p className="text-xl font-bold font-mono">
+              <p className="text-xl font-bold font-mono text-white">
                 {formatPrice(portfolioSummary.totalInvested)}
               </p>
             </div>
@@ -182,18 +182,18 @@ const PortfolioScreen = ({
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
-              <BarChart3 size={20} className="text-[#00d4ff]" />
+              <BarChart3 size={20} className="text-[#3ecfcf]" />
               Performance
             </h2>
             <button
               onClick={() => setShowChart(!showChart)}
-              className="text-xs text-[#00d4ff] hover:text-[#00ff88] transition-colors"
+              className="text-xs text-[#3ecfcf] hover:text-[#34d399] transition-colors font-medium"
             >
               {showChart ? 'Hide' : 'View'}
             </button>
           </div>
           {showChart && (
-            <div className="rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 p-4 overflow-hidden">
+            <div className="rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#0f0f1a] to-[#0a0a12] backdrop-blur-xl border border-white/8 p-4 overflow-hidden shadow-2xl">
               <PriceChart priceHistory={portfolioData.map(d => d.value)} height={200} />
             </div>
           )}
@@ -202,7 +202,7 @@ const PortfolioScreen = ({
         {/* Open Positions Section */}
         <div className="mb-8">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Activity size={20} className="text-[#ff2d78]" />
+            <Activity size={20} className="text-[#e8475f]" />
             Open Positions
             {positions.length > 0 && (
               <span className="ml-auto text-sm font-normal text-gray-400">
@@ -212,7 +212,7 @@ const PortfolioScreen = ({
           </h2>
 
           {positions.length === 0 ? (
-            <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl border border-white/10 border-dashed p-8 text-center">
+            <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl border border-white/8 border-dashed p-8 text-center">
               <Eye size={32} className="mx-auto mb-3 text-gray-600" />
               <p className="text-gray-400 mb-4">No open positions yet.</p>
               <p className="text-sm text-gray-500">
@@ -244,7 +244,7 @@ const PortfolioScreen = ({
                 return (
                   <div
                     key={index}
-                    className="rounded-xl bg-gradient-to-br from-white/8 to-white/3 backdrop-blur-lg border border-white/10 p-4 hover:border-white/20 transition-all duration-300"
+                    className="rounded-xl bg-gradient-to-br from-white/8 to-white/3 backdrop-blur-lg border border-white/10 p-4 hover:border-white/20 transition-all duration-300 shadow-lg"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
@@ -253,8 +253,8 @@ const PortfolioScreen = ({
                           <span
                             className={`text-xs font-bold px-2 py-1 rounded-full ${
                               position.type === 'LONG'
-                                ? 'bg-[#00ff88]/20 text-[#00ff88]'
-                                : 'bg-[#ff2d78]/20 text-[#ff2d78]'
+                                ? 'bg-[#34d399]/20 text-[#34d399]'
+                                : 'bg-[#e8475f]/20 text-[#e8475f]'
                             }`}
                           >
                             {position.type}
@@ -266,7 +266,7 @@ const PortfolioScreen = ({
                       </div>
                       <button
                         onClick={() => onCloseTrade(index)}
-                        className="ml-2 p-2 rounded-lg bg-white/5 hover:bg-[#ff2d78]/30 text-gray-400 hover:text-[#ff2d78] transition-all duration-300"
+                        className="ml-2 p-2 rounded-lg bg-white/5 hover:bg-[#ef4444]/30 text-gray-400 hover:text-[#ef4444] transition-all duration-300"
                       >
                         <X size={16} />
                       </button>
@@ -284,14 +284,14 @@ const PortfolioScreen = ({
                       <div className="text-right">
                         <p
                           className={`text-lg font-bold font-mono ${
-                            isProfit ? 'text-[#00ff88]' : 'text-[#ff2d78]'
+                            isProfit ? 'text-[#34d399]' : 'text-[#ef4444]'
                           }`}
                         >
                           {isProfit ? '+' : ''}{formatPrice(unrealizedPnL)}
                         </p>
                         <p
                           className={`text-sm font-mono ${
-                            isProfit ? 'text-[#00ff88]' : 'text-[#ff2d78]'
+                            isProfit ? 'text-[#34d399]' : 'text-[#ef4444]'
                           }`}
                         >
                           {isProfit ? '+' : ''}
@@ -309,15 +309,15 @@ const PortfolioScreen = ({
         {/* Dividends Section */}
         <div className="mb-8">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <DollarSign size={20} className="text-[#00d4ff]" />
+            <DollarSign size={20} className="text-[#3ecfcf]" />
             Dividends
           </h2>
 
-          <div className="rounded-2xl bg-gradient-to-br from-white/8 to-white/3 backdrop-blur-lg border border-white/10 p-5">
+          <div className="rounded-2xl bg-gradient-to-br from-[#1a1a2e] via-[#0f0f1a] to-[#0a0a12] backdrop-blur-lg border border-white/8 p-5 shadow-2xl">
             <div className="mb-4">
-              <p className="text-sm text-gray-400 mb-2">
+              <p className="text-sm text-gray-300 mb-2">
                 Earn{' '}
-                <span className="text-[#00ff88] font-bold">
+                <span className="text-[#34d399] font-bold">
                   {formatPct(TOKEN_CONFIG.dividendRate * 100)}
                 </span>{' '}
                 daily on profitable positions
@@ -328,10 +328,10 @@ const PortfolioScreen = ({
             </div>
 
             <div className="border-t border-white/10 pt-4">
-              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">
+              <p className="text-xs text-gray-500 uppercase tracking-widest mb-1 font-medium">
                 Est. Daily Earnings
               </p>
-              <p className="text-2xl font-bold font-mono text-[#00ff88]">
+              <p className="text-2xl font-bold font-mono text-[#34d399]">
                 +{formatPrice(estimatedDailyDividend)}
               </p>
             </div>
@@ -341,7 +341,7 @@ const PortfolioScreen = ({
         {/* Trade History Section */}
         <div className="mb-8">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Clock size={20} className="text-[#00d4ff]" />
+            <Clock size={20} className="text-[#3ecfcf]" />
             Trade History
             {tradeHistory.length > 0 && (
               <span className="ml-auto text-sm font-normal text-gray-400">
@@ -351,7 +351,7 @@ const PortfolioScreen = ({
           </h2>
 
           {tradeHistory.length === 0 ? (
-            <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl border border-white/10 border-dashed p-8 text-center">
+            <div className="rounded-2xl bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl border border-white/8 border-dashed p-8 text-center">
               <Clock size={32} className="mx-auto mb-3 text-gray-600" />
               <p className="text-gray-400">No trades completed yet</p>
             </div>
@@ -371,10 +371,10 @@ const PortfolioScreen = ({
                 return (
                   <div
                     key={index}
-                    className={`rounded-xl p-4 border transition-all duration-300 ${
+                    className={`rounded-xl p-4 border transition-all duration-300 shadow-lg ${
                       isProfit
-                        ? 'bg-gradient-to-br from-[#00ff88]/5 to-[#00ff88]/0 border-[#00ff88]/20 hover:border-[#00ff88]/40'
-                        : 'bg-gradient-to-br from-[#ff2d78]/5 to-[#ff2d78]/0 border-[#ff2d78]/20 hover:border-[#ff2d78]/40'
+                        ? 'bg-gradient-to-br from-[#34d399]/5 to-[#34d399]/0 border-[#34d399]/20 hover:border-[#34d399]/40'
+                        : 'bg-gradient-to-br from-[#ef4444]/5 to-[#ef4444]/0 border-[#ef4444]/20 hover:border-[#ef4444]/40'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -384,8 +384,8 @@ const PortfolioScreen = ({
                           <span
                             className={`text-xs font-bold px-2 py-1 rounded-full ${
                               trade.type === 'LONG'
-                                ? 'bg-[#00ff88]/20 text-[#00ff88]'
-                                : 'bg-[#ff2d78]/20 text-[#ff2d78]'
+                                ? 'bg-[#34d399]/20 text-[#34d399]'
+                                : 'bg-[#e8475f]/20 text-[#e8475f]'
                             }`}
                           >
                             {trade.type}
@@ -407,14 +407,14 @@ const PortfolioScreen = ({
                       <div className="text-right">
                         <p
                           className={`text-lg font-bold font-mono ${
-                            isProfit ? 'text-[#00ff88]' : 'text-[#ff2d78]'
+                            isProfit ? 'text-[#34d399]' : 'text-[#ef4444]'
                           }`}
                         >
                           {isProfit ? '+' : ''}{formatPrice(trade.pnl)}
                         </p>
                         <p
                           className={`text-sm font-mono ${
-                            isProfit ? 'text-[#00ff88]' : 'text-[#ff2d78]'
+                            isProfit ? 'text-[#34d399]' : 'text-[#ef4444]'
                           }`}
                         >
                           {isProfit ? '+' : ''}

@@ -240,11 +240,11 @@ export default function OnboardingFlow({ onComplete }) {
   const canProceedStep4 = formData.interests.length >= 3
 
   return (
-    <div className="w-full h-screen bg-[#06060b] overflow-hidden flex flex-col">
+    <div className="w-full h-screen bg-[#0a0a12] overflow-hidden flex flex-col">
       {/* Ambient background glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#e8475f]/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#3ecfcf]/5 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/3 rounded-full blur-3xl" />
       </div>
 
@@ -263,7 +263,7 @@ export default function OnboardingFlow({ onComplete }) {
                   style={{
                     width: currentStep === step ? '32px' : '8px',
                     background: currentStep >= step
-                      ? 'linear-gradient(90deg, #ff2d78, #a855f7)'
+                      ? 'linear-gradient(90deg, #e8475f, #a855f7)'
                       : 'rgba(255,255,255,0.1)'
                   }}
                 />
@@ -358,13 +358,13 @@ function FormInput({ icon: Icon, label, type = 'text', placeholder, value, onCha
         </label>
       )}
       <div className="relative group">
-        {Icon && <Icon size={16} className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors ${filled ? 'text-pink-400' : 'text-gray-600'}`} />}
+        {Icon && <Icon size={16} className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors ${filled ? 'text-[#e8475f]' : 'text-gray-600'}`} />}
         <input
           type={type}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className={`w-full ${Icon ? 'pl-10' : 'pl-4'} ${suffix ? 'pr-12' : 'pr-4'} py-3.5 rounded-xl bg-white/[0.04] border text-white placeholder-gray-600 focus:outline-none transition-all duration-300 text-sm ${filled ? 'border-pink-500/40 bg-pink-500/[0.03]' : 'border-white/[0.08] group-hover:border-white/20'} focus:border-pink-500/60 focus:bg-pink-500/[0.05]`}
+          className={`w-full ${Icon ? 'pl-10' : 'pl-4'} ${suffix ? 'pr-12' : 'pr-4'} py-3.5 rounded-xl bg-white/[0.04] border text-white placeholder-gray-600 focus:outline-none transition-all duration-300 text-sm ${filled ? 'border-[#e8475f]/40 bg-[#e8475f]/[0.03]' : 'border-white/[0.08] group-hover:border-white/20'} focus:border-[#e8475f]/60 focus:bg-[#e8475f]/[0.05]`}
         />
         {suffix && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -382,12 +382,12 @@ function FormInput({ icon: Icon, label, type = 'text', placeholder, value, onCha
 function CTAButton({ onClick, disabled, children, variant = 'primary', className = '' }) {
   const styles = {
     primary: {
-      background: disabled ? 'rgba(255, 45, 120, 0.2)' : 'linear-gradient(135deg, #ff2d78 0%, #e91e63 50%, #ff2d78 100%)',
-      boxShadow: disabled ? 'none' : '0 4px 20px rgba(255, 45, 120, 0.4), 0 0 40px rgba(255, 45, 120, 0.1)',
+      background: disabled ? 'rgba(232, 71, 95, 0.2)' : 'linear-gradient(135deg, #e8475f 0%, #d63650 50%, #e8475f 100%)',
+      boxShadow: disabled ? 'none' : '0 4px 20px rgba(232, 71, 95, 0.4), 0 0 40px rgba(232, 71, 95, 0.1)',
     },
     success: {
-      background: 'linear-gradient(135deg, #00ff88 0%, #00d4ff 100%)',
-      boxShadow: '0 4px 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 212, 255, 0.1)',
+      background: 'linear-gradient(135deg, #34d399 0%, #3ecfcf 100%)',
+      boxShadow: '0 4px 20px rgba(52, 211, 153, 0.4), 0 0 40px rgba(62, 207, 207, 0.1)',
     }
   }
 
@@ -425,10 +425,10 @@ function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEma
         }}
       >
         <div className="relative w-20 h-20 mx-auto">
-          <div className="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-2xl blur-xl opacity-30 animate-pulse" />
-          <div className="relative w-full h-full bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-2xl border border-pink-500/30 flex items-center justify-center backdrop-blur-sm">
-            <Heart size={32} className="text-pink-400" fill="currentColor" style={{ filter: 'drop-shadow(0 0 8px rgba(236, 72, 153, 0.6))' }} />
-            <TrendingUp size={24} className="text-cyan-400 absolute -top-1 -right-1" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 212, 255, 0.6))' }} />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#e8475f] via-purple-500 to-[#3ecfcf] rounded-2xl blur-xl opacity-30 animate-pulse" />
+          <div className="relative w-full h-full bg-gradient-to-br from-[#e8475f]/20 to-purple-500/20 rounded-2xl border border-[#e8475f]/30 flex items-center justify-center backdrop-blur-sm">
+            <Heart size={32} className="text-[#e8475f]" fill="currentColor" style={{ filter: 'drop-shadow(0 0 8px rgba(236, 72, 153, 0.6))' }} />
+            <TrendingUp size={24} className="text-[#3ecfcf] absolute -top-1 -right-1" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 212, 255, 0.6))' }} />
           </div>
         </div>
       </div>
@@ -444,15 +444,15 @@ function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEma
         <h1
           className="text-5xl font-black tracking-tight mb-3"
           style={{
-            background: 'linear-gradient(135deg, #ff2d78 0%, #a855f7 40%, #00d4ff 100%)',
+            background: 'linear-gradient(135deg, #e8475f 0%, #a855f7 40%, #3ecfcf 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
           }}
         >
-          LoveMarket
+          Evolve
         </h1>
-        <p className="text-gray-400 text-base">Where every person is a stock</p>
+        <p className="text-gray-400 text-base">Where connections evolve into value</p>
       </div>
 
       {/* Stats Pills */}
@@ -464,11 +464,11 @@ function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEma
           transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s'
         }}
       >
-        <div className="px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20">
-          <span className="text-pink-400 text-sm font-semibold">12K+ Traders</span>
+        <div className="px-4 py-2 rounded-full bg-[#e8475f]/10 border border-[#e8475f]/20">
+          <span className="text-[#e8475f] text-sm font-semibold">12K+ Traders</span>
         </div>
-        <div className="px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-          <span className="text-cyan-400 text-sm font-semibold">94% Accuracy</span>
+        <div className="px-4 py-2 rounded-full bg-[#3ecfcf]/10 border border-[#3ecfcf]/20">
+          <span className="text-[#3ecfcf] text-sm font-semibold">94% Accuracy</span>
         </div>
       </div>
 
@@ -491,7 +491,7 @@ function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEma
               onClick={() => setShowLogin(true)}
               className="w-full py-3 text-sm text-gray-400 hover:text-white transition-colors font-medium"
             >
-              Already have an account? <span className="text-pink-400">Log in</span>
+              Already have an account? <span className="text-[#e8475f]">Log in</span>
             </button>
           </>
         ) : (
@@ -534,7 +534,7 @@ function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEma
               onClick={() => setShowLogin(false)}
               className="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors"
             >
-              Don't have an account? <span className="text-pink-400">Sign up</span>
+              Don't have an account? <span className="text-[#e8475f]">Sign up</span>
             </button>
           </div>
         )}
@@ -566,8 +566,8 @@ function Step2BasicInfo({ formData, onChange, onNext, canProceed, showPassword, 
       {supabaseReady && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-5 h-5 rounded bg-pink-500/20 flex items-center justify-center">
-              <Lock size={11} className="text-pink-400" />
+            <div className="w-5 h-5 rounded bg-[#e8475f]/20 flex items-center justify-center">
+              <Lock size={11} className="text-[#e8475f]" />
             </div>
             <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">Account</span>
           </div>
@@ -599,9 +599,9 @@ function Step2BasicInfo({ formData, onChange, onNext, canProceed, showPassword, 
       )}
 
       {!supabaseReady && (
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-cyan-500/[0.06] border border-cyan-500/15">
-          <Zap size={16} className="text-cyan-400 flex-shrink-0" />
-          <p className="text-xs text-cyan-300/80">Demo mode active. Run <code className="font-mono bg-white/10 px-1 py-0.5 rounded text-cyan-400">npm install</code> for real accounts.</p>
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-[#3ecfcf]/[0.06] border border-[#3ecfcf]/15">
+          <Zap size={16} className="text-[#3ecfcf] flex-shrink-0" />
+          <p className="text-xs text-cyan-300/80">Demo mode active. Run <code className="font-mono bg-white/10 px-1 py-0.5 rounded text-[#3ecfcf]">npm install</code> for real accounts.</p>
         </div>
       )}
 
@@ -711,7 +711,7 @@ function Step3Details({ formData, onChange, onNext, canProceed }) {
       </div>
 
       {/* Score Preview */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-purple-500/[0.06] to-pink-500/[0.06] border border-purple-500/15">
+      <div className="p-4 rounded-xl bg-gradient-to-r from-purple-500/[0.06] to-[#e8475f]/[0.06] border border-purple-500/15">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp size={14} className="text-purple-400" />
@@ -723,7 +723,7 @@ function Step3Details({ formData, onChange, onNext, canProceed }) {
         </div>
         <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-purple-500 to-pink-500"
+            className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-purple-500 to-[#e8475f]"
             style={{ width: `${[formData.height, formData.education, formData.job, formData.company].filter(Boolean).length * 25}%` }}
           />
         </div>
@@ -761,14 +761,14 @@ function Step4Interests({ formData, onToggle, onNext, canProceed }) {
             <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3" />
             <circle
               cx="24" cy="24" r="20" fill="none"
-              stroke={count >= 3 ? '#ff2d78' : '#666'}
+              stroke={count >= 3 ? '#e8475f' : '#666'}
               strokeWidth="3"
               strokeDasharray={`${(count / Math.max(count, 3)) * 125.6} 125.6`}
               strokeLinecap="round"
               className="transition-all duration-500"
             />
           </svg>
-          <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${count >= 3 ? 'text-pink-400' : 'text-gray-500'}`}>
+          <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${count >= 3 ? 'text-[#e8475f]' : 'text-gray-500'}`}>
             {count}
           </span>
         </div>
@@ -783,15 +783,15 @@ function Step4Interests({ formData, onToggle, onNext, canProceed }) {
               onClick={() => onToggle(name)}
               className="flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-left text-sm font-medium transition-all duration-200 active:scale-[0.97]"
               style={{
-                background: selected ? 'rgba(255, 45, 120, 0.1)' : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${selected ? 'rgba(255, 45, 120, 0.4)' : 'rgba(255,255,255,0.06)'}`,
-                color: selected ? '#ff7eb3' : '#888',
-                boxShadow: selected ? '0 0 20px rgba(255, 45, 120, 0.15)' : 'none',
+                background: selected ? 'rgba(232, 71, 95, 0.1)' : 'rgba(255,255,255,0.02)',
+                border: `1px solid ${selected ? 'rgba(232, 71, 95, 0.4)' : 'rgba(255,255,255,0.06)'}`,
+                color: selected ? '#e8999f' : '#888',
+                boxShadow: selected ? '0 0 20px rgba(232, 71, 95, 0.15)' : 'none',
               }}
             >
               <span className="text-lg">{emoji}</span>
               <span>{name}</span>
-              {selected && <Check size={14} className="text-pink-400 ml-auto" />}
+              {selected && <Check size={14} className="text-[#e8475f] ml-auto" />}
             </button>
           )
         })}
@@ -820,7 +820,7 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
       appName: 'instagram',
       icon: Instagram,
       color: '#E1306C',
-      gradient: 'from-pink-500 to-purple-600',
+      gradient: 'from-[#e8475f] to-purple-600',
       description: 'Verify lifestyle & authenticity',
       boost: '+18%',
     },
@@ -854,7 +854,7 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
       </div>
 
       {/* Trust Score Preview */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500/[0.06] to-cyan-500/[0.06] border border-emerald-500/15">
+      <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500/[0.06] to-[#3ecfcf]/[0.06] border border-emerald-500/15">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Shield size={14} className="text-emerald-400" />
@@ -866,7 +866,7 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
         </div>
         <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-emerald-500 to-cyan-500"
+            className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-emerald-500 to-[#3ecfcf]"
             style={{ width: `${(connectedCount / 3) * 100}%` }}
           />
         </div>
@@ -992,7 +992,7 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
               <div
                 className="w-1.5 h-1.5 rounded-full"
                 style={{
-                  background: ['#ff2d78', '#00d4ff', '#a855f7', '#00ff88', '#fbbf24'][Math.floor(Math.random() * 5)],
+                  background: ['#e8475f', '#3ecfcf', '#a855f7', '#34d399', '#fbbf24'][Math.floor(Math.random() * 5)],
                   opacity: 0.7,
                 }}
               />
@@ -1010,7 +1010,7 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
         <div className="text-4xl mb-3">🎉</div>
         <h1 className="text-3xl font-black text-white">Your IPO is Live!</h1>
         <p className="text-gray-400 mt-2">
-          Welcome to the market, <span className="text-pink-400 font-bold">{name}</span>
+          Welcome to the market, <span className="text-[#e8475f] font-bold">{name}</span>
         </p>
       </div>
 
@@ -1018,8 +1018,8 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
       <div
         className="p-6 rounded-2xl border"
         style={{
-          background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.06) 0%, rgba(168, 85, 247, 0.06) 100%)',
-          borderColor: 'rgba(0, 212, 255, 0.2)',
+          background: 'linear-gradient(135deg, rgba(62, 207, 207, 0.06) 0%, rgba(168, 85, 247, 0.06) 100%)',
+          borderColor: 'rgba(62, 207, 207, 0.2)',
           opacity: phase >= 2 ? 1 : 0,
           transform: phase >= 2 ? 'translateY(0)' : 'translateY(20px)',
           transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -1031,7 +1031,7 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
         <div
           className="text-5xl font-black"
           style={{
-            background: 'linear-gradient(135deg, #00d4ff, #a855f7)',
+            background: 'linear-gradient(135deg, #3ecfcf, #a855f7)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -1044,7 +1044,7 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
             <span className="text-xs font-bold text-emerald-400">New Listing</span>
           </div>
           <div className="px-2 py-1 rounded-full bg-white/5">
-            <span className="text-xs text-gray-400">500 $LOVE</span>
+            <span className="text-xs text-gray-400">500 $EVO</span>
           </div>
         </div>
       </div>
@@ -1059,7 +1059,7 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
           <CircularGauge
             score={animatedScore}
             size={120}
-            color="#ff2d78"
+            color="#e8475f"
             label="AI Score"
             delay={1200}
           />
@@ -1108,7 +1108,7 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
         <p
           className="text-2xl font-black"
           style={{
-            background: 'linear-gradient(135deg, #00ff88, #00d4ff)',
+            background: 'linear-gradient(135deg, #34d399, #3ecfcf)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}

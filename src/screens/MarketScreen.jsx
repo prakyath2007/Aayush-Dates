@@ -37,6 +37,16 @@ import {
   computeCompositeScore
 } from '../utils/helpers.js'
 
+// Color palette
+const COLORS = {
+  primaryCoral: '#e8475f',
+  tealAccent: '#3ecfcf',
+  gainGreen: '#34d399',
+  lossRed: '#ef4444',
+  gold: '#f0b429',
+  background: '#0a0a12'
+}
+
 // Ticker banner that scrolls continuously
 function TickerBanner({ profiles = [] }) {
   const tickerItems = profiles.map(p => ({
@@ -50,7 +60,7 @@ function TickerBanner({ profiles = [] }) {
   const duplicatedItems = [...tickerItems, ...tickerItems]
 
   return (
-    <div className="relative w-full overflow-hidden bg-black/30 border-b border-white/10 py-3">
+    <div className="relative w-full overflow-hidden border-b border-white/10 py-3" style={{ backgroundColor: 'rgba(10, 10, 18, 0.6)' }}>
       <style>{`
         @keyframes ticker-scroll {
           0% {
@@ -73,14 +83,14 @@ function TickerBanner({ profiles = [] }) {
       <div className="ticker-scroll flex gap-8 px-4 whitespace-nowrap">
         {duplicatedItems.map((item, idx) => {
           const isPositive = item.changePct >= 0
-          const changeColor = isPositive ? '#00ff88' : '#ff2d78'
+          const changeColor = isPositive ? COLORS.gainGreen : COLORS.lossRed
 
           return (
             <div
               key={`${item.id}-${idx}`}
               className="flex items-center gap-3 flex-shrink-0"
             >
-              <span className="font-mono text-sm font-semibold text-cyan-400">
+              <span className="font-mono text-sm font-semibold" style={{ color: COLORS.tealAccent }}>
                 {item.name}
               </span>
               <span className="font-mono text-xs text-gray-400">
@@ -107,11 +117,16 @@ function FilterTabs({ activeTab, onTabChange }) {
         <button
           key={tab}
           onClick={() => onTabChange(tab)}
-          className={`px-4 py-2 rounded-lg font-mono text-sm whitespace-nowrap transition-all ${
+          className={`px-4 py-2 rounded-xl font-mono text-sm whitespace-nowrap transition-all ${
             activeTab === tab
-              ? 'bg-cyan-500/30 border border-cyan-500/50 text-cyan-400'
+              ? 'border text-white'
               : 'bg-white/5 border border-white/10 text-gray-400 hover:border-white/20'
           }`}
+          style={{
+            backgroundColor: activeTab === tab ? `${COLORS.tealAccent}20` : undefined,
+            borderColor: activeTab === tab ? `${COLORS.tealAccent}50` : undefined,
+            color: activeTab === tab ? COLORS.tealAccent : undefined
+          }}
         >
           {tab}
         </button>
@@ -124,7 +139,7 @@ function FilterTabs({ activeTab, onTabChange }) {
 function SearchBar({ value, onChange }) {
   return (
     <div className="px-4 py-3">
-      <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
+      <div className="flex items-center gap-2 px-4 py-3 border border-white/10 rounded-xl" style={{ backgroundColor: 'rgba(20, 18, 30, 0.8)' }}>
         <Search size={18} className="text-gray-400 flex-shrink-0" />
         <input
           type="text"
@@ -158,26 +173,26 @@ function MarketOverview({ profiles }) {
   return (
     <div className="px-4 py-4 space-y-3">
       <div className="grid grid-cols-3 gap-3">
-        {/* Total Market Cap */}
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+        {/* Total Market Cap - Teal */}
+        <div className="p-3 rounded-lg border border-white/10" style={{ backgroundColor: 'rgba(20, 18, 30, 0.8)' }}>
           <p className="text-xs text-gray-500 mb-1">Total Market Cap</p>
-          <p className="font-mono font-bold text-sm text-cyan-400">
+          <p className="font-mono font-bold text-sm" style={{ color: COLORS.tealAccent }}>
             {formatMarketCap(totalMarketCap)}
           </p>
         </div>
 
-        {/* 24h Volume */}
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+        {/* 24h Volume - Green */}
+        <div className="p-3 rounded-lg border border-white/10" style={{ backgroundColor: 'rgba(20, 18, 30, 0.8)' }}>
           <p className="text-xs text-gray-500 mb-1">24h Volume</p>
-          <p className="font-mono font-bold text-sm text-green-400">
+          <p className="font-mono font-bold text-sm" style={{ color: COLORS.gainGreen }}>
             {total24hVolume.toLocaleString()}
           </p>
         </div>
 
-        {/* Active Traders */}
-        <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+        {/* Active Traders - Coral */}
+        <div className="p-3 rounded-lg border border-white/10" style={{ backgroundColor: 'rgba(20, 18, 30, 0.8)' }}>
           <p className="text-xs text-gray-500 mb-1">Active Traders</p>
-          <p className="font-mono font-bold text-sm text-pink-400">
+          <p className="font-mono font-bold text-sm" style={{ color: COLORS.primaryCoral }}>
             {profiles.length}
           </p>
         </div>
@@ -192,7 +207,7 @@ function TradingBottomSheet({ isOpen, onClose, profile, tokens, onTrade }) {
 
   const compositeScore = computeCompositeScore(profile.agentScores, AGENTS)
   const isPositive = profile.priceChangePct >= 0
-  const changeColor = isPositive ? '#00ff88' : '#ff2d78'
+  const changeColor = isPositive ? COLORS.gainGreen : COLORS.lossRed
 
   const [expandedAgent, setExpandedAgent] = useState(null)
   const [isTrading, setIsTrading] = useState(false)
@@ -228,7 +243,7 @@ function TradingBottomSheet({ isOpen, onClose, profile, tokens, onTrade }) {
                 {profile.job} @ {profile.company}
               </p>
               <div className="flex items-center gap-4 mt-2">
-                <p className="font-mono font-bold text-lg text-cyan-400">
+                <p className="font-mono font-bold text-lg" style={{ color: COLORS.tealAccent }}>
                   {formatPrice(profile.currentPrice)}
                 </p>
                 <p
@@ -245,7 +260,7 @@ function TradingBottomSheet({ isOpen, onClose, profile, tokens, onTrade }) {
 
         {/* Composite Score Badge */}
         <div className="flex justify-center">
-          <CircularGauge score={compositeScore} size={100} color="#00d4ff" label="Composite" />
+          <CircularGauge score={compositeScore} size={100} color={COLORS.tealAccent} label="Composite" />
         </div>
 
         {/* Price Chart */}
@@ -276,25 +291,25 @@ function TradingBottomSheet({ isOpen, onClose, profile, tokens, onTrade }) {
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg bg-white/5 border border-white/10">
             <p className="text-xs text-gray-500">All-Time High</p>
-            <p className="font-mono font-bold text-sm text-green-400 mt-1">
+            <p className="font-mono font-bold text-sm mt-1" style={{ color: COLORS.gainGreen }}>
               {formatPrice(profile.allTimeHigh)}
             </p>
           </div>
           <div className="p-3 rounded-lg bg-white/5 border border-white/10">
             <p className="text-xs text-gray-500">All-Time Low</p>
-            <p className="font-mono font-bold text-sm text-red-400 mt-1">
+            <p className="font-mono font-bold text-sm mt-1" style={{ color: COLORS.lossRed }}>
               {formatPrice(profile.allTimeLow)}
             </p>
           </div>
           <div className="p-3 rounded-lg bg-white/5 border border-white/10">
             <p className="text-xs text-gray-500">Market Cap</p>
-            <p className="font-mono font-bold text-sm text-cyan-400 mt-1">
+            <p className="font-mono font-bold text-sm mt-1" style={{ color: COLORS.tealAccent }}>
               {profile.marketCap}
             </p>
           </div>
           <div className="p-3 rounded-lg bg-white/5 border border-white/10">
             <p className="text-xs text-gray-500">24h Volume</p>
-            <p className="font-mono font-bold text-sm text-pink-400 mt-1">
+            <p className="font-mono font-bold text-sm mt-1" style={{ color: COLORS.primaryCoral }}>
               {profile.volume24h.toLocaleString()}
             </p>
           </div>
@@ -309,19 +324,19 @@ function TradingBottomSheet({ isOpen, onClose, profile, tokens, onTrade }) {
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
               <p className="text-gray-500">Total Longs</p>
-              <p className="font-mono font-bold text-green-400">
+              <p className="font-mono font-bold" style={{ color: COLORS.gainGreen }}>
                 {profile.bankOfUsers.totalLongs.toLocaleString()}
               </p>
             </div>
             <div>
               <p className="text-gray-500">Total Shorts</p>
-              <p className="font-mono font-bold text-pink-400">
+              <p className="font-mono font-bold" style={{ color: COLORS.primaryCoral }}>
                 {profile.bankOfUsers.totalShorts.toLocaleString()}
               </p>
             </div>
             <div>
               <p className="text-gray-500">Demand Score</p>
-              <p className="font-mono font-bold text-cyan-400">
+              <p className="font-mono font-bold" style={{ color: COLORS.tealAccent }}>
                 {profile.bankOfUsers.demandScore}
               </p>
             </div>
@@ -333,7 +348,7 @@ function TradingBottomSheet({ isOpen, onClose, profile, tokens, onTrade }) {
             </div>
             <div>
               <p className="text-gray-500">Conversion Rate</p>
-              <p className="font-mono font-bold text-yellow-400">
+              <p className="font-mono font-bold" style={{ color: COLORS.gold }}>
                 {profile.bankOfUsers.conversionRate}%
               </p>
             </div>
@@ -351,24 +366,36 @@ function TradingBottomSheet({ isOpen, onClose, profile, tokens, onTrade }) {
           <button
             onClick={() => handleTrade('LONG')}
             disabled={isTrading || tokens < TOKEN_CONFIG.longCost}
-            className="px-4 py-3 rounded-lg bg-green-500/20 border border-green-500/50 text-green-400 font-mono font-semibold text-sm hover:bg-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+            className="px-4 py-3 rounded-lg font-mono font-semibold text-sm hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+            style={{
+              backgroundColor: `${COLORS.gainGreen}20`,
+              borderColor: `${COLORS.gainGreen}50`,
+              color: COLORS.gainGreen,
+              border: `1px solid ${COLORS.gainGreen}50`
+            }}
           >
             <div className="flex flex-col items-center gap-1">
               <span>LONG</span>
-              <span className="text-xs text-green-400/70">
-                {TOKEN_CONFIG.longCost} $LOVE
+              <span className="text-xs opacity-70">
+                {TOKEN_CONFIG.longCost} $EVO
               </span>
             </div>
           </button>
           <button
             onClick={() => handleTrade('SHORT')}
             disabled={isTrading || tokens < TOKEN_CONFIG.shortCost}
-            className="px-4 py-3 rounded-lg bg-pink-500/20 border border-pink-500/50 text-pink-400 font-mono font-semibold text-sm hover:bg-pink-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+            className="px-4 py-3 rounded-lg font-mono font-semibold text-sm hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+            style={{
+              backgroundColor: `${COLORS.primaryCoral}20`,
+              borderColor: `${COLORS.primaryCoral}50`,
+              color: COLORS.primaryCoral,
+              border: `1px solid ${COLORS.primaryCoral}50`
+            }}
           >
             <div className="flex flex-col items-center gap-1">
               <span>SHORT</span>
-              <span className="text-xs text-pink-400/70">
-                {TOKEN_CONFIG.shortCost} $LOVE
+              <span className="text-xs opacity-70">
+                {TOKEN_CONFIG.shortCost} $EVO
               </span>
             </div>
           </button>
@@ -491,7 +518,7 @@ export default function MarketScreen({ profiles = [], tokens = 1500, onTrade = (
       {/* News Section */}
       <div className="px-4 py-6 border-t border-white/10 space-y-4">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">
-          <Zap size={20} className="text-yellow-400" />
+          <Zap size={20} style={{ color: COLORS.gold }} />
           Market News
         </h2>
         <div className="space-y-3 max-h-48 overflow-y-auto">

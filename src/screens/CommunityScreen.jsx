@@ -41,9 +41,9 @@ export default function CommunityScreen({ profiles = [], tokens }) {
   };
 
   return (
-    <div className="w-full max-w-[430px] mx-auto bg-[#06060b] min-h-screen pb-24">
+    <div className="w-full max-w-[430px] mx-auto bg-[#0a0a12] min-h-screen pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-[#06060b]/95 backdrop-blur border-b border-white/10 p-6">
+      <div className="sticky top-0 z-40 bg-[#0a0a12]/95 backdrop-blur border-b border-white/10 p-6">
         <h1 className="text-3xl font-bold text-white">Community</h1>
         <p className="text-gray-400 text-sm mt-1">See who's trending in love</p>
       </div>
@@ -53,7 +53,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Heart className="w-5 h-5 text-[#ff2d78]" />
+              <Heart className="w-5 h-5 text-[#e8475f]" />
               Who's Going to Match?
             </h2>
             <Eye className="w-4 h-4 text-gray-500" />
@@ -68,12 +68,12 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                 <div
                   key={couple.id}
                   onClick={() => setSelectedCouple(couple)}
-                  className="bg-gradient-to-r from-white/5 to-white/10 backdrop-blur border border-white/10 rounded-lg p-4 hover:border-[#ff2d78]/50 cursor-pointer transition-all group"
+                  className="bg-gradient-to-r from-white/5 to-white/10 backdrop-blur border border-white/10 rounded-lg p-4 hover:border-[#e8475f]/50 cursor-pointer transition-all group"
                 >
                   {/* Profile avatars and names */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff2d78] to-[#00d4ff] flex items-center justify-center text-white font-bold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#e8475f] to-[#3ecfcf] flex items-center justify-center text-white font-bold text-sm">
                         {profile1?.name?.charAt(0)}
                       </div>
                       <div>
@@ -83,7 +83,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                         <p className="text-gray-500 text-xs">{profile1?.job}</p>
                       </div>
                     </div>
-                    <Heart className="w-4 h-4 text-[#ff2d78]" />
+                    <Heart className="w-4 h-4 text-[#e8475f]" />
                     <div className="flex items-center gap-2">
                       <div>
                         <p className="text-white text-sm font-semibold text-right">
@@ -93,7 +93,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                           {profile2?.job}
                         </p>
                       </div>
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#00ff88] flex items-center justify-center text-white font-bold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3ecfcf] to-[#34d399] flex items-center justify-center text-white font-bold text-sm">
                         {profile2?.name?.charAt(0)}
                       </div>
                     </div>
@@ -105,13 +105,13 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                       <span className="text-gray-400 text-xs font-medium">
                         Match Probability
                       </span>
-                      <span className="text-[#00ff88] text-sm font-bold">
+                      <span className="text-[#34d399] text-sm font-bold">
                         {Math.round(couple.probability * 100)}%
                       </span>
                     </div>
                     <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-[#ff2d78] to-[#00d4ff]"
+                        className="h-full bg-gradient-to-r from-[#e8475f] to-[#3ecfcf]"
                         style={{ width: `${Math.round(couple.probability * 100)}%` }}
                       />
                     </div>
@@ -120,7 +120,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                   {/* Odds and reasoning */}
                   <div className="flex items-center justify-between">
                     <p className="text-gray-400 text-xs">{couple.reasoning}</p>
-                    <span className="text-[#00d4ff] font-bold text-sm">
+                    <span className="text-[#3ecfcf] font-bold text-sm">
                       {couple.odds}
                     </span>
                   </div>
@@ -134,7 +134,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-[#00d4ff]" />
+              <Users className="w-5 h-5 text-[#3ecfcf]" />
               Friend Groups
             </h2>
           </div>
@@ -144,7 +144,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
               <div
                 key={community.id}
                 onClick={() => setSelectedCommunity(community)}
-                className="bg-gradient-to-r from-white/5 to-white/10 backdrop-blur border border-white/10 rounded-lg p-4 hover:border-[#00d4ff]/50 cursor-pointer transition-all"
+                className="bg-gradient-to-r from-white/5 to-white/10 backdrop-blur border border-white/10 rounded-lg p-4 hover:border-[#3ecfcf]/50 cursor-pointer transition-all"
               >
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-white font-semibold">{community.name}</h3>
@@ -164,15 +164,15 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                       <div
                         className={`w-2 h-2 rounded-full ${
                           community.sentiment === 'bullish'
-                            ? 'bg-[#00ff88]'
-                            : 'bg-[#ff2d78]'
+                            ? 'bg-[#34d399]'
+                            : 'bg-[#ef4444]'
                         }`}
                       />
                       <p
                         className={`font-bold text-sm capitalize ${
                           community.sentiment === 'bullish'
-                            ? 'text-[#00ff88]'
-                            : 'text-[#ff2d78]'
+                            ? 'text-[#34d399]'
+                            : 'text-[#ef4444]'
                         }`}
                       >
                         {community.sentiment}
@@ -223,8 +223,8 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-[#00ff88]" />
-                  <p className="text-[#00ff88] font-bold text-sm">
+                  <TrendingUp className="w-4 h-4 text-[#34d399]" />
+                  <p className="text-[#34d399] font-bold text-sm">
                     +{trader.return}%
                   </p>
                 </div>
@@ -237,7 +237,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Star className="w-5 h-5 text-[#ff2d78]" />
+              <Star className="w-5 h-5 text-[#e8475f]" />
               Trending Now
             </h2>
           </div>
@@ -246,10 +246,10 @@ export default function CommunityScreen({ profiles = [], tokens }) {
             {trendingProfiles.map((profile) => (
               <div
                 key={profile.id}
-                className="bg-gradient-to-r from-white/5 to-white/10 backdrop-blur border border-white/10 rounded-lg p-3 flex items-center justify-between hover:border-[#ff2d78]/50 cursor-pointer transition-all"
+                className="bg-gradient-to-r from-white/5 to-white/10 backdrop-blur border border-white/10 rounded-lg p-3 flex items-center justify-between hover:border-[#e8475f]/50 cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#ff2d78] to-[#00d4ff] flex items-center justify-center text-white font-bold">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#e8475f] to-[#3ecfcf] flex items-center justify-center text-white font-bold">
                     {profile.name.charAt(0)}
                   </div>
                   <div>
@@ -263,7 +263,7 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                 </div>
                 <div className="text-right">
                   <p className="text-gray-400 text-xs mb-1">24h Volume</p>
-                  <p className="text-[#00d4ff] font-bold text-sm">
+                  <p className="text-[#3ecfcf] font-bold text-sm">
                     {formatPrice(profile.volume)}
                   </p>
                 </div>
@@ -280,13 +280,13 @@ export default function CommunityScreen({ profiles = [], tokens }) {
             <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Probability</span>
-                <span className="text-[#00ff88] font-bold">
+                <span className="text-[#34d399] font-bold">
                   {Math.round(selectedCouple.probability * 100)}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Odds Multiplier</span>
-                <span className="text-[#00d4ff] font-bold">
+                <span className="text-[#3ecfcf] font-bold">
                   {selectedCouple.odds}
                 </span>
               </div>
@@ -313,14 +313,14 @@ export default function CommunityScreen({ profiles = [], tokens }) {
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs">Trading Volume</p>
-                  <p className="text-[#00d4ff] font-bold text-lg mt-1">
+                  <p className="text-[#3ecfcf] font-bold text-lg mt-1">
                     {formatPrice(selectedCommunity.totalVolume)}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs">Sentiment</p>
                   <p className={`font-bold text-lg mt-1 capitalize ${
-                    selectedCommunity.sentiment === 'bullish' ? 'text-[#00ff88]' : 'text-[#ff2d78]'
+                    selectedCommunity.sentiment === 'bullish' ? 'text-[#34d399]' : 'text-[#ef4444]'
                   }`}>
                     {selectedCommunity.sentiment}
                   </p>

@@ -69,18 +69,18 @@ export default function ProfileScreen({ user, tokens }) {
   );
 
   return (
-    <div className="w-full max-w-[430px] mx-auto bg-[#06060b] min-h-screen pb-24">
+    <div className="w-full max-w-[430px] mx-auto bg-[#0a0a12] min-h-screen pb-24">
       {/* Profile Header */}
       <div className="relative bg-gradient-to-b from-white/5 to-transparent pt-8 pb-6 px-6 border-b border-white/10">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#ff2d78] to-[#00d4ff] flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-[#ff2d78]/30">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#e8475f] to-[#3ecfcf] flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-[#e8475f]/30">
                 {user.name?.charAt(0) || 'U'}
               </div>
-              <button className="absolute bottom-0 right-0 w-5 h-5 bg-[#00d4ff] rounded-full flex items-center justify-center hover:bg-[#00d4ff]/80 transition-all">
-                <Camera className="w-3 h-3 text-[#06060b]" />
+              <button className="absolute bottom-0 right-0 w-5 h-5 bg-[#3ecfcf] rounded-full flex items-center justify-center hover:bg-[#3ecfcf]/80 transition-all">
+                <Camera className="w-3 h-3 text-[#0a0a12]" />
               </button>
             </div>
 
@@ -125,7 +125,7 @@ export default function ProfileScreen({ user, tokens }) {
             </p>
             <p
               className={`text-xs mt-1 font-semibold ${
-                priceChange >= 0 ? 'text-[#00ff88]' : 'text-[#ff2d78]'
+                priceChange >= 0 ? 'text-[#34d399]' : 'text-[#ef4444]'
               }`}
             >
               {priceChange >= 0 ? '+' : ''}{formatPct(priceChange / 100)}
@@ -140,17 +140,17 @@ export default function ProfileScreen({ user, tokens }) {
 
           <div className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur border border-white/10 rounded-lg p-4">
             <p className="text-gray-400 text-xs mb-2">Total Longs</p>
-            <p className="text-[#ff2d78] font-bold text-lg">{totalLongs}</p>
+            <p className="text-[#e8475f] font-bold text-lg">{totalLongs}</p>
             <p className="text-gray-500 text-xs mt-1">positions held</p>
           </div>
         </div>
 
         {/* AI Transparency Section - THE INNOVATIVE FEATURE */}
-        <div className="border border-[#00d4ff]/30 rounded-xl p-6 bg-gradient-to-br from-[#00d4ff]/10 via-transparent to-transparent backdrop-blur">
+        <div className="border border-[#3ecfcf]/30 rounded-xl p-6 bg-gradient-to-br from-[#3ecfcf]/10 via-transparent to-transparent backdrop-blur">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Shield className="w-5 h-5 text-[#00d4ff]" />
+                <Shield className="w-5 h-5 text-[#3ecfcf]" />
                 Your AI Score
               </h2>
               <p className="text-gray-400 text-xs mt-1">
@@ -162,7 +162,7 @@ export default function ProfileScreen({ user, tokens }) {
               className="p-2 hover:bg-white/10 rounded-lg transition-all"
             >
               {showAiBreakdown ? (
-                <Eye className="w-5 h-5 text-[#00d4ff]" />
+                <Eye className="w-5 h-5 text-[#3ecfcf]" />
               ) : (
                 <EyeOff className="w-5 h-5 text-gray-500" />
               )}
@@ -184,7 +184,7 @@ export default function ProfileScreen({ user, tokens }) {
                 {agentScores.map((agent) => (
                   <div
                     key={agent.id}
-                    className="bg-white/5 border border-white/10 rounded-lg p-3 hover:border-[#00d4ff]/50 transition-all"
+                    className="bg-white/5 border border-white/10 rounded-lg p-3 hover:border-[#3ecfcf]/50 transition-all"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -195,13 +195,13 @@ export default function ProfileScreen({ user, tokens }) {
                           {agent.name}
                         </span>
                       </div>
-                      <span className="text-[#00d4ff] font-bold text-sm">
+                      <span className="text-[#3ecfcf] font-bold text-sm">
                         {agent.score}
                       </span>
                     </div>
                     <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-[#ff2d78] to-[#00d4ff]"
+                        className="h-full bg-gradient-to-r from-[#e8475f] to-[#3ecfcf]"
                         style={{ width: `${agent.score}%` }}
                       />
                     </div>
@@ -211,7 +211,7 @@ export default function ProfileScreen({ user, tokens }) {
 
               <div className="pt-4 mt-4 border-t border-white/10">
                 <p className="text-gray-500 text-xs">
-                  <span className="text-[#00d4ff]">💡 Tip:</span> Complete your
+                  <span className="text-[#3ecfcf]">💡 Tip:</span> Complete your
                   profile and connect your social apps to improve your score.
                 </p>
               </div>
@@ -223,9 +223,9 @@ export default function ProfileScreen({ user, tokens }) {
         <div>
           <h3 className="text-lg font-bold text-white mb-4">Connected Apps</h3>
           <div className="space-y-3">
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:border-[#ff2d78]/50 transition-all cursor-pointer">
+            <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:border-[#e8475f]/50 transition-all cursor-pointer">
               <div className="flex items-center gap-3">
-                <Instagram className="w-5 h-5 text-[#ff2d78]" />
+                <Instagram className="w-5 h-5 text-[#e8475f]" />
                 <div>
                   <p className="text-white font-medium">Instagram</p>
                   <p className="text-gray-500 text-xs">
@@ -238,9 +238,9 @@ export default function ProfileScreen({ user, tokens }) {
               <ChevronRight className="w-4 h-4 text-gray-500" />
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:border-[#00d4ff]/50 transition-all cursor-pointer">
+            <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:border-[#3ecfcf]/50 transition-all cursor-pointer">
               <div className="flex items-center gap-3">
-                <Linkedin className="w-5 h-5 text-[#00d4ff]" />
+                <Linkedin className="w-5 h-5 text-[#3ecfcf]" />
                 <div>
                   <p className="text-white font-medium">LinkedIn</p>
                   <p className="text-gray-500 text-xs">
@@ -253,9 +253,9 @@ export default function ProfileScreen({ user, tokens }) {
               <ChevronRight className="w-4 h-4 text-gray-500" />
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:border-[#00ff88]/50 transition-all cursor-pointer">
+            <div className="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between hover:border-[#34d399]/50 transition-all cursor-pointer">
               <div className="flex items-center gap-3">
-                <Activity className="w-5 h-5 text-[#00ff88]" />
+                <Activity className="w-5 h-5 text-[#34d399]" />
                 <div>
                   <p className="text-white font-medium">Strava</p>
                   <p className="text-gray-500 text-xs">
@@ -283,7 +283,7 @@ export default function ProfileScreen({ user, tokens }) {
               <div
                 className={`w-10 h-6 rounded-full transition-all ${
                   anonymousMode
-                    ? 'bg-[#00d4ff]'
+                    ? 'bg-[#3ecfcf]'
                     : 'bg-white/20'
                 }`}
                 onClick={() => setAnonymousMode(!anonymousMode)}
@@ -335,8 +335,8 @@ export default function ProfileScreen({ user, tokens }) {
             {/* Log Out */}
             <button className="w-full bg-white/5 hover:bg-white/10 transition-all p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <LogOut className="w-5 h-5 text-[#ff2d78]" />
-                <p className="text-[#ff2d78] font-medium">Log Out</p>
+                <LogOut className="w-5 h-5 text-[#ef4444]" />
+                <p className="text-[#ef4444] font-medium">Log Out</p>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-500" />
             </button>
@@ -351,7 +351,7 @@ export default function ProfileScreen({ user, tokens }) {
               {user.interests.map((interest, idx) => (
                 <div
                   key={idx}
-                  className="bg-gradient-to-r from-[#ff2d78]/20 to-[#00d4ff]/20 border border-[#00d4ff]/30 rounded-full px-4 py-2 text-white text-sm font-medium"
+                  className="bg-gradient-to-r from-[#e8475f]/20 to-[#3ecfcf]/20 border border-[#3ecfcf]/30 rounded-full px-4 py-2 text-white text-sm font-medium"
                 >
                   {interest}
                 </div>
@@ -363,9 +363,9 @@ export default function ProfileScreen({ user, tokens }) {
 
       {/* Token Display (Optional footer) */}
       {tokens && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#06060b] to-transparent p-6 flex items-center justify-between border-t border-white/10">
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a12] to-transparent p-6 flex items-center justify-between border-t border-white/10">
           <p className="text-gray-400 text-sm">Your Balance</p>
-          <p className="text-[#00ff88] font-bold text-lg">{formatPrice(tokens)}</p>
+          <p className="text-[#34d399] font-bold text-lg">{formatPrice(tokens)}</p>
         </div>
       )}
     </div>

@@ -4,23 +4,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        lm: {
-          bg: '#06060b',
-          bg2: '#0c0c14',
-          bg3: '#12121e',
-          card: 'rgba(14, 14, 24, 0.85)',
-          pink: '#ff2d78',
-          blue: '#00d4ff',
-          green: '#00ff88',
-          red: '#ff3366',
-          gold: '#ffd700',
+        ev: {
+          bg: '#0a0a12',
+          bg2: '#10101b',
+          bg3: '#16172a',
+          card: 'rgba(16, 16, 27, 0.85)',
+          coral: '#e8475f',
+          teal: '#3ecfcf',
+          emerald: '#34d399',
+          red: '#ef4444',
+          gold: '#f0b429',
           purple: '#a855f7',
           orange: '#ff8c00',
-          cyan: '#22d3ee',
-          text: '#f0f0f5',
-          text2: '#8888a0',
-          text3: '#555570',
-          border: 'rgba(255, 255, 255, 0.06)',
+          rose: '#f43f5e',
+          text: '#f5f5f7',
+          text2: '#9ca3af',
+          text3: '#6b7280',
+          border: 'rgba(255, 255, 255, 0.08)',
         },
       },
       fontFamily: {

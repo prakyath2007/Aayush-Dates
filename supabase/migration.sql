@@ -1,5 +1,5 @@
 -- ============================================================================
--- LoveMarket — Full Database Migration for Supabase
+-- Evolve — Full Database Migration for Supabase
 -- Run this in the Supabase SQL Editor (Dashboard → SQL Editor → New Query)
 -- ============================================================================
 

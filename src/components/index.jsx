@@ -9,7 +9,8 @@ import {
   Coins,
   MapPin,
   X,
-  CheckCircle,
+  Heart,
+  ArrowDown,
   Zap,
   AlertTriangle,
   Lightbulb,
@@ -33,7 +34,7 @@ import {
 // ============================================================================
 // 1. CircularGauge - SVG circular progress ring with animated value
 // ============================================================================
-export function CircularGauge({ score = 0, size = 80, color = '#00d4ff', label, delay = 0 }) {
+export function CircularGauge({ score = 0, size = 80, color = '#3ecfcf', label, delay = 0 }) {
   const animatedScore = useAnimatedValue(score, 1000, delay)
   const radius = (size - 8) / 2
   const circumference = 2 * Math.PI * radius
@@ -47,7 +48,7 @@ export function CircularGauge({ score = 0, size = 80, color = '#00d4ff', label, 
   const fgDashArray = circumference * scorePct
   const fgDashOffset = circumference * (1 - scorePct)
 
-  // Glow filter
+  // Glow filter - softer
   const glowId = `glow-${Math.random()}`
 
   return (
@@ -55,7 +56,7 @@ export function CircularGauge({ score = 0, size = 80, color = '#00d4ff', label, 
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="drop-shadow-lg">
         <defs>
           <filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+            <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
             <feMerge>
               <feMergeNode in="coloredBlur" />
               <feMergeNode in="SourceGraphic" />
@@ -92,7 +93,7 @@ export function CircularGauge({ score = 0, size = 80, color = '#00d4ff', label, 
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
 
-        {/* Center text */}
+        {/* Center text - subtle glow */}
         <text
           x={size / 2}
           y={size / 2}
@@ -102,7 +103,7 @@ export function CircularGauge({ score = 0, size = 80, color = '#00d4ff', label, 
           fill={color}
           style={{
             fontSize: size * 0.28,
-            textShadow: `0 0 12px ${color}99`
+            textShadow: `0 0 4px ${color}44`
           }}
         >
           {Math.round(animatedScore)}
@@ -110,7 +111,7 @@ export function CircularGauge({ score = 0, size = 80, color = '#00d4ff', label, 
       </svg>
 
       {label && (
-        <div className="text-xs uppercase font-mono text-gray-400 letter-spacing tracking-widest">
+        <div className="text-xs uppercase font-semibold text-gray-500 tracking-widest">
           {label}
         </div>
       )}
@@ -137,9 +138,9 @@ export function PriceChart({ priceHistory = [], height = 200 }) {
       chartRef.current = null
     }
 
-    // Create gradient
+    // Create gradient with new teal
     const gradient = ctx.createLinearGradient(0, 0, 0, height)
-    gradient.addColorStop(0, '#00d4ff40')
+    gradient.addColorStop(0, '#3ecfcf40')
     gradient.addColorStop(1, 'transparent')
 
     // Data labels (every 5th: D1, D6, D11, etc)
@@ -155,14 +156,14 @@ export function PriceChart({ priceHistory = [], height = 200 }) {
           {
             label: 'Price',
             data: priceHistory,
-            borderColor: '#00d4ff',
+            borderColor: '#3ecfcf',
             backgroundColor: gradient,
             fill: true,
             tension: 0.35,
             pointRadius: 0,
             pointHoverRadius: 6,
             pointHoverBorderWidth: 2,
-            pointHoverBorderColor: '#00d4ff',
+            pointHoverBorderColor: '#3ecfcf',
             pointHoverBackgroundColor: 'rgba(10,10,18,0.95)',
             borderWidth: 2
           }
@@ -181,15 +182,16 @@ export function PriceChart({ priceHistory = [], height = 200 }) {
           },
           tooltip: {
             enabled: true,
-            backgroundColor: 'rgba(10,10,18,0.95)',
-            borderColor: '#00d4ff',
+            backgroundColor: 'rgba(15,15,23,0.98)',
+            borderColor: '#3ecfcf',
             borderWidth: 1,
             titleFont: {
-              family: '"JetBrains Mono", monospace',
-              size: 12
+              family: 'system-ui, -apple-system, sans-serif',
+              size: 12,
+              weight: 'bold'
             },
             bodyFont: {
-              family: '"JetBrains Mono", monospace',
+              family: 'system-ui, -apple-system, sans-serif',
               size: 11
             },
             padding: 8,
@@ -212,7 +214,7 @@ export function PriceChart({ priceHistory = [], height = 200 }) {
             ticks: {
               color: 'rgba(255,255,255,0.4)',
               font: {
-                family: '"JetBrains Mono", monospace',
+                family: 'system-ui, -apple-system, sans-serif',
                 size: 10
               }
             }
@@ -228,7 +230,7 @@ export function PriceChart({ priceHistory = [], height = 200 }) {
             ticks: {
               color: 'rgba(255,255,255,0.4)',
               font: {
-                family: '"JetBrains Mono", monospace',
+                family: 'system-ui, -apple-system, sans-serif',
                 size: 10
               },
               callback: function (value) {
@@ -262,7 +264,7 @@ export function PriceChart({ priceHistory = [], height = 200 }) {
 }
 
 // ============================================================================
-// 3. VolumeChart - Chart.js bar chart (green for up, red for down)
+// 3. VolumeChart - Chart.js bar chart (gain green for up, loss red for down)
 // ============================================================================
 export function VolumeChart({ volumeHistory = [], priceHistory = [], height = 40 }) {
   const canvasRef = useRef(null)
@@ -281,8 +283,8 @@ export function VolumeChart({ volumeHistory = [], priceHistory = [], height = 40
 
     // Determine bar colors based on price direction
     const barColors = volumeHistory.map((vol, i) => {
-      if (i === 0) return '#00ff88'
-      return priceHistory[i] >= priceHistory[i - 1] ? '#00ff88' : '#ff2d78'
+      if (i === 0) return '#34d399'
+      return priceHistory[i] >= priceHistory[i - 1] ? '#34d399' : '#ef4444'
     })
 
     const chart = new Chart(ctx, {
@@ -338,7 +340,7 @@ export function VolumeChart({ volumeHistory = [], priceHistory = [], height = 40
 // ============================================================================
 // 4. MiniSparkline - Tiny SVG polyline chart
 // ============================================================================
-export function MiniSparkline({ data = [], color = '#00d4ff', width = 80, height = 24 }) {
+export function MiniSparkline({ data = [], color = '#3ecfcf', width = 80, height = 24 }) {
   if (!data || data.length === 0) {
     return <div style={{ width, height }} className="bg-gray-800 rounded" />
   }
@@ -374,20 +376,20 @@ export function MiniSparkline({ data = [], color = '#00d4ff', width = 80, height
 // 5. SignalBadge - BUY/SELL/HOLD badge
 // ============================================================================
 export function SignalBadge({ signal = 'HOLD' }) {
-  let bgColor = 'rgba(215, 205, 0, 0.1)'
-  let textColor = '#ffd700'
+  let bgColor = 'rgba(240, 180, 41, 0.15)'
+  let textColor = '#f0b429'
 
   if (signal === 'BUY') {
-    bgColor = 'rgba(0, 255, 136, 0.1)'
-    textColor = '#00ff88'
+    bgColor = 'rgba(52, 211, 153, 0.15)'
+    textColor = '#34d399'
   } else if (signal === 'SELL') {
-    bgColor = 'rgba(255, 45, 120, 0.1)'
-    textColor = '#ff2d78'
+    bgColor = 'rgba(239, 68, 68, 0.15)'
+    textColor = '#ef4444'
   }
 
   return (
     <div
-      className="px-2 py-1 rounded text-xs font-mono uppercase letter-spacing"
+      className="px-2 py-1 rounded-md text-xs font-semibold uppercase letter-spacing"
       style={{
         backgroundColor: bgColor,
         color: textColor,
@@ -400,53 +402,50 @@ export function SignalBadge({ signal = 'HOLD' }) {
 }
 
 // ============================================================================
-// 6. TokenDisplay - Coins icon with $LOVE token count
+// 6. TokenDisplay - Coins icon with $EVO token count (gold styling)
 // ============================================================================
 export function TokenDisplay({ tokens = 0, compact = false }) {
   const isLow = tokens < 500
-  const glowStyle = isLow ? { textShadow: '0 0 8px rgba(255, 45, 120, 0.5)' } : {}
+  const glowStyle = isLow ? { textShadow: '0 0 8px rgba(239, 68, 68, 0.5)' } : {}
 
   if (compact) {
     return (
       <div className="flex items-center gap-1" style={glowStyle}>
-        <Coins size={16} className="text-yellow-400" />
-        <span className="font-mono text-sm">{tokens}</span>
+        <Coins size={16} className="text-yellow-500" />
+        <span className="text-sm font-semibold">{tokens}</span>
       </div>
     )
   }
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 rounded bg-gray-900/30 border border-gray-800" style={glowStyle}>
-      <Coins size={20} className="text-yellow-400" />
+    <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-900/40 border border-gray-800/60" style={glowStyle}>
+      <Coins size={20} className="text-yellow-500 flex-shrink-0" />
       <div className="flex flex-col">
-        <span className="font-mono text-xs text-gray-400">$LOVE</span>
-        <span className="font-mono font-bold text-sm">{tokens}</span>
+        <span className="text-xs font-semibold text-gray-500 uppercase">$EVO</span>
+        <span className="font-bold text-sm text-white">{tokens.toLocaleString()}</span>
       </div>
     </div>
   )
 }
 
 // ============================================================================
-// 7. SwipeCard - Main dating card for Discover screen
+// 7. SwipeCard - Premium Hinge-like dating card
 // ============================================================================
 export function SwipeCard({ profile, onLike, onPass, onAnalyze, style = {} }) {
   if (!profile) return null
 
-  const intentScore = profile.agentScores?.intent?.score || 0
-  const compositeScore = Math.round(
-    Object.values(profile.agentScores || {}).reduce((sum, a) => sum + (a?.score || 0), 0) /
-      Object.keys(profile.agentScores || {}).length
-  )
-
   return (
     <div
-      className="relative w-full rounded-2xl overflow-hidden glass-card border border-white/10 shadow-2xl cursor-grab active:cursor-grabbing h-[600px] flex flex-col"
+      className="relative w-full overflow-hidden cursor-grab active:cursor-grabbing flex flex-col shadow-2xl transition-all"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+        height: '580px',
+        borderRadius: '24px',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.08)',
         ...style
       }}
     >
-      {/* Avatar/Image Area - 60% of card */}
+      {/* Avatar/Image Area - 65% of card */}
       <div
         className="flex-1 relative overflow-hidden"
         style={{
@@ -455,63 +454,86 @@ export function SwipeCard({ profile, onLike, onPass, onAnalyze, style = {} }) {
           backgroundPosition: 'center'
         }}
       >
-        {/* Intent Score Badge */}
-        <div className="absolute top-4 right-4 z-10 p-2 bg-black/40 backdrop-blur-sm rounded-full border border-white/10">
-          <CircularGauge score={intentScore} size={44} color="#00d4ff" />
-        </div>
-
-        {/* Name & Age Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/60 to-transparent p-6 pt-12">
-          <h2 className="text-3xl font-bold text-white">
+        {/* Name & Age Overlay - Bottom of image with gradient */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-6 pt-16">
+          <h2 className="text-4xl font-bold text-white">
             {profile.name}, {profile.age}
           </h2>
+          {profile.tagline && (
+            <p className="text-sm italic text-gray-300 mt-2 max-w-xs">{profile.tagline}</p>
+          )}
         </div>
       </div>
 
-      {/* Info Section */}
-      <div className="p-6 space-y-3 bg-gradient-to-b from-transparent to-black/40">
-        {/* Job & Company */}
-        <div className="text-sm text-gray-300">
-          <span className="font-semibold">{profile.job}</span>
-          <span className="text-gray-500"> @ {profile.company}</span>
+      {/* Info Section - 35% of card */}
+      <div className="p-5 space-y-3 bg-gradient-to-b from-gray-950/40 to-gray-950/80 flex flex-col justify-between">
+        {/* Job & Location */}
+        <div className="space-y-2">
+          {profile.job && (
+            <div className="text-sm text-gray-200">
+              <span className="font-semibold">{profile.job}</span>
+              {profile.company && <span className="text-gray-500"> @ {profile.company}</span>}
+            </div>
+          )}
+
+          {profile.location && (
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <MapPin size={14} className="flex-shrink-0" />
+              <span>{profile.location}</span>
+            </div>
+          )}
         </div>
 
-        {/* Education */}
-        <div className="text-xs text-gray-400">{profile.education}</div>
-
-        {/* Location */}
-        <div className="flex items-center gap-2 text-sm text-gray-400">
-          <MapPin size={14} />
-          {profile.location}
-        </div>
-
-        {/* Tagline */}
-        <div className="text-sm italic text-gray-300">{profile.tagline}</div>
+        {/* Interests/Tags as pills */}
+        {profile.interests && profile.interests.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {profile.interests.slice(0, 3).map((interest, idx) => (
+              <span
+                key={idx}
+                className="px-3 py-1 text-xs rounded-full bg-gray-800/50 border border-gray-700/50 text-gray-300"
+              >
+                {interest}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Action Buttons */}
-        <div className="flex gap-4 pt-4 justify-center">
+        <div className="flex gap-3 pt-3 justify-center">
           <button
             onClick={onPass}
-            className="w-14 h-14 rounded-full bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 flex items-center justify-center transition-all active:scale-95"
+            className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95 hover:opacity-80"
             title="Pass"
+            style={{
+              backgroundColor: 'rgba(107, 114, 128, 0.2)',
+              border: '1px solid rgba(107, 114, 128, 0.3)'
+            }}
           >
-            <X size={24} className="text-red-400" />
-          </button>
-
-          <button
-            onClick={onAnalyze}
-            className="px-6 h-14 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 flex items-center justify-center transition-all active:scale-95 font-mono text-sm"
-            title="Analyze"
-          >
-            Analyze
+            <X size={20} className="text-gray-400" />
           </button>
 
           <button
             onClick={onLike}
-            className="w-14 h-14 rounded-full bg-green-500/20 hover:bg-green-500/30 border border-green-500/50 flex items-center justify-center transition-all active:scale-95"
+            className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95 hover:opacity-80"
             title="Like"
+            style={{
+              backgroundColor: 'rgba(232, 71, 95, 0.15)',
+              border: '1px solid rgba(232, 71, 95, 0.3)'
+            }}
           >
-            <CheckCircle size={24} className="text-green-400" />
+            <Heart size={20} className="text-rose-500 fill-rose-500" />
+          </button>
+
+          <button
+            onClick={onAnalyze}
+            className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95 hover:opacity-80"
+            title="Analyze"
+            style={{
+              backgroundColor: 'rgba(232, 71, 95, 0.1)',
+              border: '1px solid rgba(232, 71, 95, 0.25)'
+            }}
+          >
+            <ArrowDown size={20} className="text-rose-600" />
           </button>
         </div>
       </div>
@@ -520,16 +542,16 @@ export function SwipeCard({ profile, onLike, onPass, onAnalyze, style = {} }) {
 }
 
 // ============================================================================
-// 8. ProfileHeader - Compact horizontal profile intro
+// 8. ProfileHeader - Cleaner profile intro header
 // ============================================================================
 export function ProfileHeader({ profile }) {
   if (!profile) return null
 
   return (
-    <div className="flex items-center gap-4 p-4 bg-gray-900/30 rounded-xl border border-white/10">
+    <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10" style={{ backgroundColor: 'rgba(15,15,23,0.5)' }}>
       {/* Avatar Circle */}
       <div
-        className="w-14 h-14 rounded-full flex-shrink-0 border border-white/20"
+        className="w-14 h-14 rounded-full flex-shrink-0 border border-white/15"
         style={{
           background: profile.avatar,
           backgroundSize: 'cover',
@@ -540,15 +562,15 @@ export function ProfileHeader({ profile }) {
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <h3 className="font-bold text-white truncate">
+          <h3 className="font-semibold text-white text-sm truncate">
             {profile.name}, {profile.age}
           </h3>
           {profile.verified && (
-            <Shield size={16} className="text-green-400 flex-shrink-0" />
+            <Shield size={14} className="text-green-500 flex-shrink-0" />
           )}
         </div>
-        <div className="text-xs text-gray-400">
-          {profile.job} @ {profile.company}
+        <div className="text-xs text-gray-500">
+          {profile.job} {profile.company && `@ ${profile.company}`}
         </div>
       </div>
     </div>
@@ -556,19 +578,20 @@ export function ProfileHeader({ profile }) {
 }
 
 // ============================================================================
-// 9. MarketCard - Profile in market view with sparkline
+// 9. MarketCard - Profile card in market view with sparkline
 // ============================================================================
 export function MarketCard({ profile, onClick, compact = false }) {
   if (!profile) return null
 
   const isPositive = profile.priceChangePct >= 0
-  const changeColor = isPositive ? '#00ff88' : '#ff2d78'
+  const changeColor = isPositive ? '#34d399' : '#ef4444'
 
   if (compact) {
     return (
       <div
         onClick={onClick}
-        className="p-3 rounded-lg glass-card border border-white/10 hover:border-cyan-500/50 cursor-pointer transition-all active:scale-95"
+        className="p-3 rounded-lg border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all active:scale-95"
+        style={{ backgroundColor: 'rgba(15,15,23,0.5)' }}
       >
         <div className="flex items-center gap-3">
           <div
@@ -581,13 +604,13 @@ export function MarketCard({ profile, onClick, compact = false }) {
           />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-white truncate">{profile.name}</p>
-            <p className="text-xs text-gray-400">{profile.company}</p>
+            <p className="text-xs text-gray-500">{profile.company}</p>
           </div>
           <div className="text-right flex-shrink-0">
-            <p className="font-mono font-bold text-sm text-cyan-400">
+            <p className="font-semibold text-sm text-cyan-400">
               {formatPrice(profile.currentPrice)}
             </p>
-            <p className="font-mono text-xs" style={{ color: changeColor }}>
+            <p className="text-xs" style={{ color: changeColor }}>
               {formatPct(profile.priceChangePct)}
             </p>
           </div>
@@ -599,7 +622,8 @@ export function MarketCard({ profile, onClick, compact = false }) {
   return (
     <div
       onClick={onClick}
-      className="p-4 rounded-xl glass-card border border-white/10 hover:border-cyan-500/50 cursor-pointer transition-all active:scale-95 space-y-3"
+      className="p-4 rounded-xl border border-white/10 hover:border-cyan-500/40 cursor-pointer transition-all active:scale-95 space-y-3"
+      style={{ backgroundColor: 'rgba(15,15,23,0.5)' }}
     >
       <div className="flex items-center gap-4">
         {/* Avatar */}
@@ -615,22 +639,22 @@ export function MarketCard({ profile, onClick, compact = false }) {
         {/* Name & Company */}
         <div className="flex-1 min-w-0">
           <h4 className="font-semibold text-white text-sm">{profile.name}</h4>
-          <p className="text-xs text-gray-400">{profile.company}</p>
+          <p className="text-xs text-gray-500">{profile.company}</p>
         </div>
 
         {/* Price & Change */}
         <div className="text-right flex-shrink-0">
-          <p className="font-mono font-bold text-lg text-cyan-400">
+          <p className="font-semibold text-lg text-cyan-400">
             {formatPrice(profile.currentPrice)}
           </p>
-          <p className="font-mono text-xs" style={{ color: changeColor }}>
+          <p className="text-xs" style={{ color: changeColor }}>
             {formatPct(profile.priceChangePct)}
           </p>
         </div>
       </div>
 
       {/* Sparkline */}
-      <MiniSparkline data={profile.priceHistory || []} color="#00d4ff" width="100%" height="20" />
+      <MiniSparkline data={profile.priceHistory || []} color="#3ecfcf" width="100%" height="20" />
     </div>
   )
 }
@@ -645,9 +669,10 @@ export function AgentCard({ agent, agentScore, expanded, onToggle, index = 0 }) 
 
   return (
     <div
-      className="glass-card border border-white/10 rounded-xl p-4 cursor-pointer hover:border-white/20 transition-all active:scale-95"
+      className="border border-white/10 rounded-xl p-4 cursor-pointer hover:border-white/20 transition-all active:scale-95"
       onClick={onToggle}
       style={{
+        backgroundColor: 'rgba(15,15,23,0.5)',
         animation: `slideUp 0.5s ease-out ${animationDelay}ms forwards`,
         opacity: 0
       }}
@@ -668,30 +693,30 @@ export function AgentCard({ agent, agentScore, expanded, onToggle, index = 0 }) 
           <div className="flex items-start justify-between gap-2">
             <div>
               <h4 className="font-semibold text-white text-sm">{agent.shortName}</h4>
-              <p className="text-xs text-gray-400">{agent.domain}</p>
+              <p className="text-xs text-gray-500">{agent.domain}</p>
             </div>
             <SignalBadge signal={agentScore.signal} />
           </div>
 
           {/* Weight & Trend */}
           <div className="flex items-center gap-4 mt-2">
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-600">
               {(agent.weight * 100).toFixed(0)}%
             </div>
             <div className="flex items-center gap-1 text-xs">
               {getTrendIcon(agentScore.trend) === 'up' && (
-                <TrendingUp size={12} className="text-green-400" />
+                <TrendingUp size={12} className="text-green-500" />
               )}
               {getTrendIcon(agentScore.trend) === 'down' && (
-                <TrendingDown size={12} className="text-red-400" />
+                <TrendingDown size={12} className="text-red-500" />
               )}
               {getTrendIcon(agentScore.trend) === 'neutral' && (
-                <Minus size={12} className="text-gray-400" />
+                <Minus size={12} className="text-gray-500" />
               )}
-              <span style={{ color: agentScore.trend > 0 ? '#00ff88' : agentScore.trend < 0 ? '#ff2d78' : '#999' }}>
+              <span style={{ color: agentScore.trend > 0 ? '#34d399' : agentScore.trend < 0 ? '#ef4444' : '#888' }}>
                 {formatChange(agentScore.trend)}
               </span>
-              <span className="text-gray-500">7d</span>
+              <span className="text-gray-600">7d</span>
             </div>
           </div>
         </div>
@@ -699,7 +724,7 @@ export function AgentCard({ agent, agentScore, expanded, onToggle, index = 0 }) 
         {/* Expand Chevron */}
         <ChevronDown
           size={18}
-          className="text-gray-400 flex-shrink-0 transition-transform"
+          className="text-gray-500 flex-shrink-0 transition-transform"
           style={{
             transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)'
           }}
@@ -730,15 +755,15 @@ export function PositionCard({ position, currentPrice, onClose }) {
   const isProfit = profitLoss > 0
 
   return (
-    <div className="p-4 rounded-xl glass-card border border-white/10 space-y-3">
+    <div className="p-4 rounded-xl border border-white/10 space-y-3" style={{ backgroundColor: 'rgba(15,15,23,0.5)' }}>
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <h4 className="font-semibold text-white text-sm flex-1">{profileName}</h4>
         <div
-          className="px-2 py-1 rounded text-xs font-mono uppercase"
+          className="px-2 py-1 rounded-md text-xs font-semibold uppercase"
           style={{
-            backgroundColor: isLong ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 45, 120, 0.1)',
-            color: isLong ? '#00ff88' : '#ff2d78'
+            backgroundColor: isLong ? 'rgba(52, 211, 153, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+            color: isLong ? '#34d399' : '#ef4444'
           }}
         >
           {isLong ? 'LONG' : 'SHORT'}
@@ -748,30 +773,30 @@ export function PositionCard({ position, currentPrice, onClose }) {
           className="p-1 hover:bg-white/10 rounded transition-all"
           title="Close position"
         >
-          <X size={16} className="text-gray-400" />
+          <X size={16} className="text-gray-500" />
         </button>
       </div>
 
       {/* Prices */}
       <div className="flex items-center justify-between text-xs">
-        <span className="text-gray-400">Entry: {formatPrice(entryPrice)}</span>
-        <span className="font-mono">Current: {formatPrice(currentPrice)}</span>
+        <span className="text-gray-500">Entry: {formatPrice(entryPrice)}</span>
+        <span className="text-gray-300">Current: {formatPrice(currentPrice)}</span>
       </div>
 
       {/* P&L */}
       <div
         className="p-3 rounded-lg bg-white/5 border"
         style={{
-          borderColor: isProfit ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 45, 120, 0.2)'
+          borderColor: isProfit ? 'rgba(52, 211, 153, 0.2)' : 'rgba(239, 68, 68, 0.2)'
         }}
       >
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400">P&L</span>
+          <span className="text-xs text-gray-500">P&L</span>
           <div className="text-right">
-            <p className="font-mono font-bold text-sm" style={{ color: isProfit ? '#00ff88' : '#ff2d78' }}>
+            <p className="font-semibold text-sm" style={{ color: isProfit ? '#34d399' : '#ef4444' }}>
               {isProfit ? '+' : ''}{formatPrice(profitLoss)}
             </p>
-            <p className="font-mono text-xs" style={{ color: isProfit ? '#00ff88' : '#ff2d78' }}>
+            <p className="text-xs" style={{ color: isProfit ? '#34d399' : '#ef4444' }}>
               {isProfit ? '+' : ''}{formatPct(profitLossPct)}
             </p>
           </div>
@@ -788,26 +813,27 @@ export function NewsCard({ news }) {
   if (!news) return null
 
   let IconComponent = Zap
-  let iconColor = '#ffd700'
+  let iconColor = '#f0b429'
 
   if (news.type === 'alert') {
     IconComponent = AlertTriangle
-    iconColor = '#ff2d78'
+    iconColor = '#ef4444'
   } else if (news.type === 'insight') {
     IconComponent = Lightbulb
-    iconColor = '#00d4ff'
+    iconColor = '#3ecfcf'
   }
 
   const borderColor = {
-    trending: 'rgba(0, 255, 136, 0.3)',
-    alert: 'rgba(255, 45, 120, 0.3)',
-    insight: 'rgba(0, 212, 255, 0.3)'
+    trending: 'rgba(52, 211, 153, 0.2)',
+    alert: 'rgba(239, 68, 68, 0.2)',
+    insight: 'rgba(62, 207, 207, 0.2)'
   }[news.type] || 'rgba(255, 255, 255, 0.1)'
 
   return (
     <div
-      className="p-4 rounded-xl glass-card border-l-4 space-y-2 hover:border-l-white/40 transition-colors cursor-pointer"
+      className="p-4 rounded-xl border-l-4 space-y-2 hover:border-l-white/40 transition-colors cursor-pointer"
       style={{
+        backgroundColor: 'rgba(15,15,23,0.5)',
         borderColor,
         borderBottomColor: 'rgba(255,255,255,0.1)',
         borderRightColor: 'rgba(255,255,255,0.1)',
@@ -818,8 +844,8 @@ export function NewsCard({ news }) {
         <IconComponent size={18} style={{ color: iconColor }} className="flex-shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
           <h4 className="font-semibold text-white text-sm leading-snug">{news.headline}</h4>
-          <p className="text-xs text-gray-400 leading-relaxed mt-1">{news.detail}</p>
-          <p className="text-xs text-gray-600 mt-2">{formatRelativeTime(news.timestamp)}</p>
+          <p className="text-xs text-gray-500 leading-relaxed mt-1">{news.detail}</p>
+          <p className="text-xs text-gray-700 mt-2">{formatRelativeTime(news.timestamp)}</p>
         </div>
       </div>
     </div>
@@ -832,18 +858,18 @@ export function NewsCard({ news }) {
 export function CommunityCard({ community }) {
   if (!community) return null
 
-  const sentimentColor = community.sentiment === 'bullish' ? '#00ff88' : '#ff2d78'
+  const sentimentColor = community.sentiment === 'bullish' ? '#34d399' : '#ef4444'
 
   return (
-    <div className="p-4 rounded-xl glass-card border border-white/10 space-y-3 cursor-pointer hover:border-cyan-500/50 transition-all active:scale-95">
+    <div className="p-4 rounded-xl border border-white/10 space-y-3 cursor-pointer hover:border-cyan-500/40 transition-all active:scale-95" style={{ backgroundColor: 'rgba(15,15,23,0.5)' }}>
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <h4 className="font-semibold text-white text-sm">{community.name}</h4>
-          <p className="text-xs text-gray-400 mt-1">{community.members.toLocaleString()} members</p>
+          <p className="text-xs text-gray-500 mt-1">{community.members.toLocaleString()} members</p>
         </div>
         <div
-          className="px-2 py-1 rounded text-xs font-mono uppercase whitespace-nowrap"
+          className="px-2 py-1 rounded-md text-xs font-semibold uppercase whitespace-nowrap"
           style={{
             backgroundColor: `${sentimentColor}15`,
             color: sentimentColor
@@ -856,12 +882,12 @@ export function CommunityCard({ community }) {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
         <div className="text-xs">
-          <p className="text-gray-500">Top Pick</p>
+          <p className="text-gray-600">Top Pick</p>
           <p className="text-white font-semibold">{community.topPick}</p>
         </div>
         <div className="text-xs">
-          <p className="text-gray-500">Volume</p>
-          <p className="text-white font-mono font-semibold">{community.totalVolume.toLocaleString()}</p>
+          <p className="text-gray-600">Volume</p>
+          <p className="text-white font-semibold">{community.totalVolume.toLocaleString()}</p>
         </div>
       </div>
     </div>
@@ -887,8 +913,9 @@ export function BottomSheet({ isOpen, onClose, title, children }) {
 
       {/* Sheet */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-gray-950 via-gray-920 to-gray-900/80 border-t border-white/10 rounded-t-3xl max-w-[430px] mx-auto w-full"
+        className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 rounded-t-3xl max-w-[430px] mx-auto w-full"
         style={{
+          background: 'linear-gradient(180deg, rgba(20,20,30,0.95) 0%, rgba(15,15,23,0.98) 100%)',
           transform: isOpen ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)',
           maxHeight: '80vh',
@@ -896,9 +923,9 @@ export function BottomSheet({ isOpen, onClose, title, children }) {
           flexDirection: 'column'
         }}
       >
-        {/* Handle Bar */}
+        {/* Handle Bar - wider */}
         <div className="flex justify-center pt-4 pb-2">
-          <div className="w-12 h-1 bg-gray-700 rounded-full" />
+          <div className="w-16 h-1.5 bg-gray-700 rounded-full" />
         </div>
 
         {/* Header */}
@@ -909,7 +936,7 @@ export function BottomSheet({ isOpen, onClose, title, children }) {
             className="p-2 hover:bg-white/10 rounded-lg transition-all"
             title="Close"
           >
-            <X size={20} className="text-gray-400" />
+            <X size={20} className="text-gray-500" />
           </button>
         </div>
 
@@ -926,26 +953,26 @@ export function BottomSheet({ isOpen, onClose, title, children }) {
 // 15. Toast - Notification toast
 // ============================================================================
 export function Toast({ message, type = 'success', visible }) {
-  let bgColor = 'bg-green-900/40'
+  let bgColor = 'bg-green-900/30'
   let textColor = 'text-green-300'
-  let borderColor = 'border-green-500/50'
+  let borderColor = 'border-green-500/40'
   let Icon = CheckCircle
 
   if (type === 'error') {
-    bgColor = 'bg-red-900/40'
+    bgColor = 'bg-red-900/30'
     textColor = 'text-red-300'
-    borderColor = 'border-red-500/50'
+    borderColor = 'border-red-500/40'
     Icon = AlertTriangle
   } else if (type === 'info') {
-    bgColor = 'bg-blue-900/40'
+    bgColor = 'bg-blue-900/30'
     textColor = 'text-blue-300'
-    borderColor = 'border-blue-500/50'
+    borderColor = 'border-blue-500/40'
     Icon = Lightbulb
   }
 
   return (
     <div
-      className={`${bgColor} ${borderColor} ${textColor} fixed top-4 left-4 right-4 max-w-[430px] mx-auto border rounded-xl p-4 flex items-center gap-3 z-50 transition-all`}
+      className={`${bgColor} ${borderColor} ${textColor} fixed top-4 left-4 right-4 max-w-[430px] mx-auto border rounded-lg p-4 flex items-center gap-3 z-50 transition-all`}
       style={{
         transform: visible ? 'translateY(0)' : 'translateY(-120%)',
         transition: 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)',
@@ -992,8 +1019,9 @@ const styles = `
 }
 
 .glass-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(10px);
+  background: rgba(15, 15, 23, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .animate-fadeIn {
@@ -1014,12 +1042,25 @@ const styles = `
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Color system for Evolve */
+:root {
+  --primary-coral: #e8475f;
+  --accent-teal: #3ecfcf;
+  --gain-green: #34d399;
+  --loss-red: #ef4444;
+  --gold: #f0b429;
+  --bg-dark: #0a0a12;
+  --text-primary: #f0f0f5;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
 }
 `
 

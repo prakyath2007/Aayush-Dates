@@ -97,7 +97,7 @@ export default function App() {
     const cost = type === 'LONG' ? TOKEN_CONFIG.longCost : TOKEN_CONFIG.shortCost
 
     if (tokens < cost) {
-      showToast('Not enough $LOVE tokens', 'error')
+      showToast('Not enough $EVO tokens', 'error')
       return
     }
 
@@ -111,7 +111,7 @@ export default function App() {
       timestamp: Date.now()
     }
     setPositions(prev => [...prev, newPosition])
-    showToast(`Went ${type} on ${profile.name}! -${cost} $LOVE`, 'success')
+    showToast(`Went ${type} on ${profile.name}! -${cost} $EVO`, 'success')
 
     // Try to persist to Supabase in background
     try {
@@ -156,7 +156,7 @@ export default function App() {
 
     const pnlType = pnl >= 0 ? 'success' : 'error'
     const pnlStr = pnl >= 0 ? `+${Math.floor(pnl)}` : `${Math.floor(pnl)}`
-    showToast(`Closed ${position.type} on ${profile.name}! ${pnlStr} $LOVE`, pnlType)
+    showToast(`Closed ${position.type} on ${profile.name}! ${pnlStr} $EVO`, pnlType)
 
     // Persist to Supabase
     try {
@@ -182,16 +182,16 @@ export default function App() {
 
   // Main app layout
   return (
-    <div className="flex flex-col min-h-screen max-w-[430px] mx-auto relative bg-[#06060b]">
+    <div className="flex flex-col min-h-screen max-w-[430px] mx-auto relative bg-[#0a0a12]">
       {/* Content area */}
       <div className="flex-1 overflow-y-auto pb-20">
         {profilesLoading && (
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="flex gap-1 justify-center mb-3">
-                <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                <div className="w-2 h-2 bg-[#e8475f] rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-[#3ecfcf] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                <div className="w-2 h-2 bg-[#a855f7] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
               </div>
               <p className="text-sm text-gray-400">Loading market data...</p>
             </div>
@@ -238,7 +238,7 @@ export default function App() {
       {/* AI Agent Floating Button */}
       <button
         onClick={() => setShowAgentPanel(!showAgentPanel)}
-        className="fixed bottom-24 right-4 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-pink-500 to-cyan-500 flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110 animate-pulse border border-pink-300/30"
+        className="fixed bottom-24 right-4 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#e8475f] to-[#3ecfcf] flex items-center justify-center shadow-lg shadow-[#e8475f]/20 hover:shadow-xl transition-all hover:scale-105 border border-[#e8475f]/20"
       >
         <Bot className="w-6 h-6 text-white" />
       </button>
@@ -253,11 +253,11 @@ export default function App() {
           />
 
           {/* Panel */}
-          <div className="relative z-50 bg-gradient-to-t from-slate-900 via-slate-900/95 to-slate-800/80 border-t border-pink-500/30 rounded-t-2xl p-6 max-h-[40vh] overflow-y-auto">
+          <div className="relative z-50 bg-gradient-to-t from-[#0f0f1a] via-[#0f0f1a]/95 to-[#1a1a2e]/80 border-t border-[#3ecfcf]/20 rounded-t-2xl p-6 max-h-[40vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-pink-500" />
+                <Zap className="w-5 h-5 text-[#3ecfcf]" />
                 <h2 className="text-xl font-bold text-white">AI Agents</h2>
               </div>
               <button
@@ -278,7 +278,7 @@ export default function App() {
               {AGENTS.map((agent, idx) => (
                 <div
                   key={agent.id}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 hover:border-pink-500/30 transition-colors"
+                  className="flex items-start gap-3 p-3 rounded-lg bg-[#0f0f1a]/50 border border-white/10 hover:border-[#3ecfcf]/30 transition-colors"
                 >
                   {/* Colored dot */}
                   <div
@@ -311,7 +311,7 @@ export default function App() {
       <div className="fixed bottom-0 left-0 right-0 z-30 max-w-[430px] mx-auto">
         <div className="relative">
           {/* Glass morphism background */}
-          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md border-t border-pink-500/20" />
+          <div className="absolute inset-0 bg-[#0a0a12]/90 backdrop-blur-md border-t border-[#e8475f]/15" />
 
           {/* Navigation tabs */}
           <div className="relative flex items-center justify-around h-20 px-2 safe-area-bottom">
@@ -330,13 +330,13 @@ export default function App() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'text-transparent bg-gradient-to-r from-pink-500 to-cyan-500 bg-clip-text'
+                      ? 'text-transparent bg-gradient-to-r from-[#e8475f] to-[#3ecfcf] bg-clip-text'
                       : 'text-gray-500 hover:text-gray-400'
                   }`}
                 >
                   <Icon className={`w-5 h-5 ${
                     isActive
-                      ? 'text-pink-500'
+                      ? 'text-[#e8475f]'
                       : 'text-gray-500'
                   }`} />
                   <span className="text-xs font-medium">{tab.label}</span>
