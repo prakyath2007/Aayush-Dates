@@ -1,0 +1,231 @@
+// LoveMarket Database Schema
+// Dev: SQLite (zero setup) | Prod: switch to PostgreSQL
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================================================
+// USER & AUTH
+// ============================================================================
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile       Profile?
+  positions     Position[]
+  trades        Trade[]
+  watchlist     Watchlist[]
+  notifications Notification[]
+}
+
+// ============================================================================
+// PROFILE — Every user is a "stock" on the market
+// ============================================================================
+model Profile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+
+  // Personal info
+  name            String
+  age             Int
+  location        String
+  height          String?
+  education       String?
+  job             String?
+  company         String?
+  bio             String?
+  photoUrl        String?
+  interests       String   @default("[]") // JSON array stored as string
+
+  // Connected socials
+  instagram       Boolean  @default(false)
+  linkedin        Boolean  @default(false)
+  strava          Boolean  @default(false)
+
+  // Market data
+  ipoPrice        Float    @default(100.0)
+  currentPrice    Float    @default(100.0)
+  previousPrice   Float    @default(100.0)  // Price at last tick
+  allTimeHigh     Float    @default(100.0)
+  allTimeLow      Float    @default(100.0)
+  volume24h       Int      @default(0)
+  totalVolume     Int      @default(0)
+  marketCap       Float    @default(0.0)
+
+  // Bank of Users metrics
+  totalLongs      Int      @default(0)
+  totalShorts     Int      @default(0)
+  uniqueViewers   Int      @default(0)
+  demandScore     Float    @default(5.0) // 0-10 scale
+
+  // AI composite score (weighted avg of all agents)
+  compositeScore  Float    @default(50.0) // 0-100
+
+  // Settings
+  anonymous       Boolean  @default(false)
+  active          Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  agentScores     AgentScore[]
+  priceHistory    PriceHistory[]
+  receivedPositions Position[] @relation("TargetProfile")
+}
+
+// ============================================================================
+// AGENT SCORES — Each of 9 agents scores each profile
+// ============================================================================
+model AgentScore {
+  id          String   @id @default(uuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id])
+
+  agentId     String   // 'intent', 'social', 'activity', etc.
+  score       Float    @default(50.0) // 0-100
+  signal      String   @default("HOLD") // BUY, SELL, HOLD
+  trend       Float    @default(0.0) // positive = improving
+  confidence  Float    @default(0.5) // 0-1 how confident the agent is
+  details     String   @default("{}") // JSON with agent-specific breakdown
+
+  lastTickAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([profileId, agentId])
+}
+
+// ============================================================================
+// POSITIONS — User goes LONG or SHORT on a profile
+// ============================================================================
+model Position {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  profileId     String
+  profile       Profile  @relation("TargetProfile", fields: [profileId], references: [id])
+
+  type          String   // 'LONG' or 'SHORT'
+  entryPrice    Float
+  amount        Float    @default(1.0) // Number of "shares"
+  tokenCost     Int      @default(100)
+  status        String   @default("OPEN") // OPEN, CLOSED
+
+  // P&L tracking
+  currentValue  Float    @default(0.0)
+  unrealizedPnL Float    @default(0.0)
+
+  openedAt      DateTime @default(now())
+  closedAt      DateTime?
+  closePrice    Float?
+  realizedPnL   Float?
+
+  @@index([userId, status])
+  @@index([profileId])
+}
+
+// ============================================================================
+// TRADES — Immutable trade log
+// ============================================================================
+model Trade {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  profileId   String
+  positionId  String?
+
+  action      String   // 'OPEN_LONG', 'OPEN_SHORT', 'CLOSE_LONG', 'CLOSE_SHORT'
+  price       Float
+  amount      Float    @default(1.0)
+  tokenCost   Int
+  pnl         Float?   // Only set on close trades
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([profileId])
+}
+
+// ============================================================================
+// PRICE HISTORY — Time-series data for charts
+// ============================================================================
+model PriceHistory {
+  id          String   @id @default(uuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id])
+
+  price       Float
+  volume      Int      @default(0)
+  tickType    String   @default("daily") // 'daily', 'hourly', 'on_open'
+  timestamp   DateTime @default(now())
+
+  @@index([profileId, timestamp])
+}
+
+// ============================================================================
+// TICK LOG — Record of every tick for debugging
+// ============================================================================
+model TickLog {
+  id            String   @id @default(uuid())
+  tickType      String   // 'daily', 'hourly', 'on_open'
+  triggeredBy   String?  // userId if on_open, 'cron' if scheduled
+  profilesUpdated Int    @default(0)
+  duration      Int      @default(0) // ms
+  timestamp     DateTime @default(now())
+}
+
+// ============================================================================
+// TOKEN LEDGER — Track token spending/earning
+// ============================================================================
+model TokenLedger {
+  id          String   @id @default(uuid())
+  userId      String
+  amount      Int      // positive = earned, negative = spent
+  reason      String   // 'daily_allocation', 'trade_cost', 'dividend', 'close_position'
+  balance     Int      // balance after this transaction
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ============================================================================
+// WATCHLIST
+// ============================================================================
+model Watchlist {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  profileId   String
+
+  addedAt     DateTime @default(now())
+
+  @@unique([userId, profileId])
+}
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   // 'price_alert', 'match', 'dividend', 'position_update'
+  title       String
+  message     String
+  read        Boolean  @default(false)
+  data        String   @default("{}") // JSON payload
+  createdAt   DateTime @default(now())
+
+  @@index([userId, read])
+}
