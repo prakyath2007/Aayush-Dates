@@ -1,16 +1,21 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { Heart, TrendingUp, Briefcase, Users, User, Bot, X, ChevronUp, Zap } from 'lucide-react'
+import { Heart, TrendingUp, Briefcase, Users, User, Bot, X, Zap, MessageCircle, Bell } from 'lucide-react'
 import OnboardingFlow from './screens/onboarding/OnboardingFlow'
 import DiscoverScreen from './screens/DiscoverScreen'
 import MarketScreen from './screens/MarketScreen'
 import PortfolioScreen from './screens/PortfolioScreen'
 import CommunityScreen from './screens/CommunityScreen'
 import ProfileScreen from './screens/ProfileScreen'
+import ChatScreen from './screens/ChatScreen'
+import EditProfileScreen from './screens/EditProfileScreen'
+import CouplesMarketScreen from './screens/CouplesMarketScreen'
 import { Toast } from './components/index.jsx'
 import { TOKEN_CONFIG } from './data/market'
 import { AGENTS } from './data/agents'
 import { getProfiles, executeTrade, closeTrade, getPortfolio } from './services/api'
 import { scoreAllProfiles } from './services/aiAgents'
+import { usePriceTicker, useTokenReset } from './services/priceTicker'
+import { useNotifications, requestBrowserNotifications } from './services/notificationService'
 
 export default function App() {
   // Onboarding flow
@@ -24,10 +29,35 @@ export default function App() {
   const [tradeHistory, setTradeHistory] = useState([])
   const [toast, setToast] = useState({ message: '', type: 'info', visible: false })
   const [showAgentPanel, setShowAgentPanel] = useState(false)
+  const [editingProfile, setEditingProfile] = useState(false)
 
   // Profiles from Supabase
   const [profiles, setProfiles] = useState([])
   const [profilesLoading, setProfilesLoading] = useState(true)
+
+  // Show toast notification
+  const showToast = useCallback((message, type = 'info') => {
+    setToast({ message, type, visible: true })
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, visible: false }))
+    }, 3000)
+  }, [])
+
+  // Real-time price ticking
+  usePriceTicker(profiles, setProfiles)
+
+  // Daily token reset
+  useTokenReset(tokens, setTokens, showToast)
+
+  // Notifications
+  const { notifications, unreadCount, addNotification } = useNotifications()
+
+  // Request browser notification permission after onboarding
+  useEffect(() => {
+    if (onboarded) {
+      requestBrowserNotifications()
+    }
+  }, [onboarded])
 
   // Fetch profiles from Supabase on mount and after onboarding
   useEffect(() => {
@@ -60,6 +90,7 @@ export default function App() {
         setPositions(portfolio.positions.map(pos => ({
           id: pos.positionId,
           profileId: pos.profileId,
+          profileName: pos.profileName,
           type: pos.type?.toUpperCase(),
           entryPrice: pos.entryPrice,
           amount: pos.amount,
@@ -81,14 +112,6 @@ export default function App() {
     setOnboarded(true)
   }, [])
 
-  // Show toast notification
-  const showToast = useCallback((message, type = 'info') => {
-    setToast({ message, type, visible: true })
-    setTimeout(() => {
-      setToast(prev => ({ ...prev, visible: false }))
-    }, 3000)
-  }, [])
-
   // Handle trade (LONG or SHORT)
   const handleTrade = useCallback(async (profileId, type) => {
     const profile = profiles.find(p => p.id === profileId)
@@ -105,6 +128,7 @@ export default function App() {
     setTokens(prev => prev - cost)
     const newPosition = {
       profileId,
+      profileName: profile.name,
       type,
       entryPrice: profile.currentPrice,
       amount: 1,
@@ -113,13 +137,29 @@ export default function App() {
     setPositions(prev => [...prev, newPosition])
     showToast(`Went ${type} on ${profile.name}! -${cost} $EVO`, 'success')
 
+    // Add notification
+    addNotification(
+      `${type} Position Opened`,
+      `You went ${type} on ${profile.name} at $${profile.currentPrice?.toFixed(2)}`,
+      'trade'
+    )
+
+    // If going LONG, this unlocks chat with that profile
+    if (type === 'LONG') {
+      addNotification(
+        'New Match Unlocked!',
+        `You can now chat with ${profile.name}`,
+        'match'
+      )
+    }
+
     // Try to persist to Supabase in background
     try {
       await executeTrade(profileId, type.toLowerCase(), 1)
     } catch (err) {
       console.warn('Trade not persisted to DB:', err.message)
     }
-  }, [tokens, profiles, showToast])
+  }, [tokens, profiles, showToast, addNotification])
 
   // Handle closing a trade
   const handleCloseTrade = useCallback(async (positionIndex) => {
@@ -143,6 +183,7 @@ export default function App() {
     // Move position to trade history
     const tradeRecord = {
       profileId: position.profileId,
+      profileName: position.profileName || profile.name,
       type: position.type,
       entryPrice: position.entryPrice,
       closePrice: currentPrice,
@@ -173,12 +214,44 @@ export default function App() {
     const profile = profiles.find(p => p.id === profileId)
     const name = profile ? profile.name : profileId
     showToast(`Passed on ${name}`, 'info')
+  }, [profiles, showToast])
+
+  // Handle couples market bet
+  const handleCouplesBet = useCallback((pairId, direction, amount) => {
+    if (tokens < amount) {
+      showToast('Not enough $EVO tokens', 'error')
+      return
+    }
+    setTokens(prev => prev - amount)
+    showToast(`Bet ${direction} on couple! -${amount} $EVO`, 'success')
+    addNotification('Couples Bet Placed', `You bet ${direction} for ${amount} $EVO`, 'trade')
+  }, [tokens, showToast, addNotification])
+
+  // Handle profile save
+  const handleProfileSave = useCallback((updatedUser) => {
+    setUserData(updatedUser)
+    setEditingProfile(false)
+    showToast('Profile updated!', 'success')
   }, [showToast])
 
   // If not onboarded, show onboarding flow
   if (!onboarded) {
     return <OnboardingFlow onComplete={handleOnboardingComplete} />
   }
+
+  // If editing profile, show edit screen
+  if (editingProfile) {
+    return (
+      <EditProfileScreen
+        user={userData}
+        onSave={handleProfileSave}
+        onBack={() => setEditingProfile(false)}
+      />
+    )
+  }
+
+  // Compute unread chat count (mock)
+  const longPositionIds = positions.filter(p => p.type === 'LONG').map(p => p.profileId)
 
   // Main app layout
   return (
@@ -221,16 +294,31 @@ export default function App() {
             onCloseTrade={handleCloseTrade}
           />
         )}
+        {!profilesLoading && activeTab === 'chat' && (
+          <ChatScreen
+            profiles={profiles}
+            positions={positions}
+          />
+        )}
         {!profilesLoading && activeTab === 'community' && (
           <CommunityScreen
             profiles={profiles}
             tokens={tokens}
           />
         )}
+        {!profilesLoading && activeTab === 'couples' && (
+          <CouplesMarketScreen
+            profiles={profiles}
+            tokens={tokens}
+            positions={positions}
+            onBet={handleCouplesBet}
+          />
+        )}
         {!profilesLoading && activeTab === 'profile' && (
           <ProfileScreen
             user={userData}
             tokens={tokens}
+            onEditProfile={() => setEditingProfile(true)}
           />
         )}
       </div>
@@ -242,6 +330,13 @@ export default function App() {
       >
         <Bot className="w-6 h-6 text-white" />
       </button>
+
+      {/* Notification Badge on AI Button */}
+      {unreadCount > 0 && (
+        <div className="fixed bottom-[132px] right-3 z-40 w-5 h-5 rounded-full bg-[#e8475f] flex items-center justify-center">
+          <span className="text-white text-[10px] font-bold">{unreadCount > 9 ? '9+' : unreadCount}</span>
+        </div>
+      )}
 
       {/* AI Agent Panel */}
       {showAgentPanel && (
@@ -314,12 +409,13 @@ export default function App() {
           <div className="absolute inset-0 bg-[#0a0a12]/90 backdrop-blur-md border-t border-[#e8475f]/15" />
 
           {/* Navigation tabs */}
-          <div className="relative flex items-center justify-around h-20 px-2 safe-area-bottom">
+          <div className="relative flex items-center justify-around h-20 px-1 safe-area-bottom">
             {[
               { id: 'discover', icon: Heart, label: 'Discover' },
               { id: 'market', icon: TrendingUp, label: 'Market' },
+              { id: 'chat', icon: MessageCircle, label: 'Chat' },
               { id: 'portfolio', icon: Briefcase, label: 'Portfolio' },
-              { id: 'community', icon: Users, label: 'Community' },
+              { id: 'couples', icon: Users, label: 'Couples' },
               { id: 'profile', icon: User, label: 'Profile' }
             ].map(tab => {
               const Icon = tab.icon
@@ -328,18 +424,24 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${
+                  className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all duration-200 ${
                     isActive
                       ? 'text-transparent bg-gradient-to-r from-[#e8475f] to-[#3ecfcf] bg-clip-text'
                       : 'text-gray-500 hover:text-gray-400'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${
-                    isActive
-                      ? 'text-[#e8475f]'
-                      : 'text-gray-500'
-                  }`} />
-                  <span className="text-xs font-medium">{tab.label}</span>
+                  <div className="relative">
+                    <Icon className={`w-5 h-5 ${
+                      isActive
+                        ? 'text-[#e8475f]'
+                        : 'text-gray-500'
+                    }`} />
+                    {/* Chat unread badge */}
+                    {tab.id === 'chat' && longPositionIds.length > 0 && !isActive && (
+                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-[#e8475f] rounded-full" />
+                    )}
+                  </div>
+                  <span className="text-[10px] font-medium">{tab.label}</span>
                 </button>
               )
             })}

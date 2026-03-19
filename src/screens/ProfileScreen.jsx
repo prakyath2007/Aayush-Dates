@@ -20,7 +20,7 @@ import { CircularGauge, PriceChart, AgentCard, TokenDisplay } from '../component
 import { AGENTS } from '../data/agents';
 import { formatPrice, formatPct, computeCompositeScore } from '../utils/helpers';
 
-export default function ProfileScreen({ user, tokens }) {
+export default function ProfileScreen({ user, tokens, onEditProfile }) {
   const [showAiBreakdown, setShowAiBreakdown] = useState(true);
   const [anonymousMode, setAnonymousMode] = useState(false);
 
@@ -96,7 +96,7 @@ export default function ProfileScreen({ user, tokens }) {
             </div>
           </div>
 
-          <button className="p-2 hover:bg-white/10 rounded-lg transition-all">
+          <button onClick={onEditProfile} className="p-2 hover:bg-white/10 rounded-lg transition-all">
             <Edit3 className="w-5 h-5 text-gray-400 hover:text-white" />
           </button>
         </div>
