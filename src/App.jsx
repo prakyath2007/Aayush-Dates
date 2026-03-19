@@ -9,7 +9,8 @@ import ProfileScreen from './screens/ProfileScreen'
 import { Toast } from './components/index.jsx'
 import { TOKEN_CONFIG } from './data/market'
 import { AGENTS } from './data/agents'
-import { getProfiles } from './services/api'
+import { getProfiles, executeTrade, closeTrade, getPortfolio } from './services/api'
+import { scoreAllProfiles } from './services/aiAgents'
 
 export default function App() {
   // Onboarding flow
@@ -32,6 +33,7 @@ export default function App() {
   useEffect(() => {
     if (onboarded) {
       loadProfiles()
+      loadPortfolio()
     }
   }, [onboarded])
 
@@ -39,11 +41,37 @@ export default function App() {
     setProfilesLoading(true)
     try {
       const data = await getProfiles()
-      setProfiles(data)
+      // Run AI agent scoring on profiles that don't have scores
+      const scoredProfiles = scoreAllProfiles(data)
+      setProfiles(scoredProfiles)
     } catch (err) {
       console.warn('Failed to load profiles:', err)
     } finally {
       setProfilesLoading(false)
+    }
+  }
+
+  // Load portfolio from Supabase after onboarding
+  const loadPortfolio = async () => {
+    try {
+      const portfolio = await getPortfolio()
+      // Update local state with positions from Supabase
+      if (portfolio.positions) {
+        setPositions(portfolio.positions.map(pos => ({
+          id: pos.positionId,
+          profileId: pos.profileId,
+          type: pos.type?.toUpperCase(),
+          entryPrice: pos.entryPrice,
+          amount: pos.amount,
+          timestamp: Date.now()
+        })))
+      }
+      // Update token balance if available
+      if (portfolio.availableTokens !== undefined) {
+        setTokens(portfolio.availableTokens)
+      }
+    } catch (err) {
+      console.warn('Failed to load portfolio:', err)
     }
   }
 
@@ -62,7 +90,7 @@ export default function App() {
   }, [])
 
   // Handle trade (LONG or SHORT)
-  const handleTrade = useCallback((profileId, type) => {
+  const handleTrade = useCallback(async (profileId, type) => {
     const profile = profiles.find(p => p.id === profileId)
     if (!profile) return
 
@@ -73,10 +101,8 @@ export default function App() {
       return
     }
 
-    // Deduct tokens
+    // Optimistically update local state
     setTokens(prev => prev - cost)
-
-    // Add position
     const newPosition = {
       profileId,
       type,
@@ -85,13 +111,18 @@ export default function App() {
       timestamp: Date.now()
     }
     setPositions(prev => [...prev, newPosition])
-
-    // Show success toast
     showToast(`Went ${type} on ${profile.name}! -${cost} $LOVE`, 'success')
-  }, [tokens, showToast])
+
+    // Try to persist to Supabase in background
+    try {
+      await executeTrade(profileId, type.toLowerCase(), 1)
+    } catch (err) {
+      console.warn('Trade not persisted to DB:', err.message)
+    }
+  }, [tokens, profiles, showToast])
 
   // Handle closing a trade
-  const handleCloseTrade = useCallback((positionIndex) => {
+  const handleCloseTrade = useCallback(async (positionIndex) => {
     const position = positions[positionIndex]
     if (!position) return
 
@@ -123,11 +154,19 @@ export default function App() {
     setTradeHistory(prev => [...prev, tradeRecord])
     setTokens(prev => prev + tokensReturned)
 
-    // Show result toast
     const pnlType = pnl >= 0 ? 'success' : 'error'
     const pnlStr = pnl >= 0 ? `+${Math.floor(pnl)}` : `${Math.floor(pnl)}`
     showToast(`Closed ${position.type} on ${profile.name}! ${pnlStr} $LOVE`, pnlType)
-  }, [positions, showToast])
+
+    // Persist to Supabase
+    try {
+      if (position.id) {
+        await closeTrade(position.id)
+      }
+    } catch (err) {
+      console.warn('Close not persisted to DB:', err.message)
+    }
+  }, [positions, profiles, showToast])
 
   // Handle pass
   const handlePass = useCallback((profileId) => {
