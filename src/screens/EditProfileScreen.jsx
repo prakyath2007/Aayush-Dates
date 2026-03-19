@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { photoService } from '../services/photoService';
 
-export function EditProfileScreen({ user, onSave, onBack }) {
+export default function EditProfileScreen({ user, onSave, onBack }) {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     age: user?.age || '',

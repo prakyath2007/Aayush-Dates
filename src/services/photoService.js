@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase.js';
 
 const BUCKET_NAME = 'profile-photos';
 const MAX_RETRIES = 3;
@@ -23,6 +23,17 @@ export async function uploadPhoto(file, userId) {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 15);
     const filename = `${userId}/${timestamp}-${random}.jpg`;
+
+    // If supabase is not available, fall back to data URL immediately
+    if (!supabase) {
+      console.warn('Supabase not available, using local data URL');
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(event.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(compressed);
+      });
+    }
 
     // Attempt to upload to Supabase
     let retries = 0;
@@ -87,7 +98,7 @@ export async function uploadPhoto(file, userId) {
  * @returns {Promise<Array<string>>} - Array of photo URLs
  */
 export async function getPhotos(userId) {
-  if (!userId) {
+  if (!userId || !supabase) {
     return [];
   }
 
@@ -133,6 +144,11 @@ export async function getPhotos(userId) {
 export async function deletePhoto(photoUrl, userId) {
   if (!photoUrl || !userId) {
     throw new Error('photoUrl and userId are required');
+  }
+
+  if (!supabase) {
+    console.warn('Supabase not available, cannot delete photo');
+    return false;
   }
 
   try {

@@ -1,12 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '../lib/supabase.js';
 
-// Try to import Supabase, but fall back to mock data if not available
-let supabase = null;
-try {
-  const supabaseModule = require('../lib/supabase.js');
-  supabase = supabaseModule.default || supabaseModule;
-} catch (error) {
-  console.warn('Supabase not available, using mock data:', error.message);
+// Simple unique ID generator (replaces uuid dependency)
+function generateId() {
+  return Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 15);
 }
 
 // Mock conversation data
@@ -259,7 +255,7 @@ export const getMessages = async (conversationId) => {
  */
 export const sendMessage = async (conversationId, text, senderId) => {
   const newMessage = {
-    id: uuidv4(),
+    id: generateId(),
     senderId,
     text,
     timestamp: new Date().toISOString(),

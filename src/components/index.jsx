@@ -17,7 +17,8 @@ import {
   ChevronDown,
   Shield,
   BarChart3,
-  Activity
+  Activity,
+  CheckCircle
 } from 'lucide-react'
 import { useAnimatedValue } from '../hooks/useAnimatedValue'
 import {
