@@ -25,7 +25,10 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
-  Star
+  Star,
+  BarChart3,
+  Crown,
+  Flame
 } from 'lucide-react'
 import { CircularGauge } from '../../components/index.jsx'
 import { useAnimatedValue } from '../../hooks/useAnimatedValue'
@@ -33,7 +36,7 @@ import { AGENTS } from '../../data/agents'
 import { supabase, supabaseReady, ready } from '../../lib/supabase.js'
 
 // ============================================================================
-// Interest List with emojis
+// Interest List
 // ============================================================================
 const INTERESTS_LIST = [
   { name: 'Travel', emoji: '✈️' },
@@ -57,6 +60,58 @@ const INTERESTS_LIST = [
   { name: 'Dogs', emoji: '🐕' },
   { name: 'Cats', emoji: '🐈' }
 ]
+
+// ============================================================================
+// Shared Styles
+// ============================================================================
+const STYLES = `
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .anim-fade-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .anim-fade-in { animation: fadeIn 0.5s ease-out both; }
+  .anim-scale-in { animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+  .delay-6 { animation-delay: 0.6s; }
+  .delay-7 { animation-delay: 0.7s; }
+`
 
 // ============================================================================
 // OnboardingFlow Component
@@ -240,42 +295,39 @@ export default function OnboardingFlow({ onComplete }) {
   const canProceedStep4 = formData.interests.length >= 3
 
   return (
-    <div className="w-full h-screen bg-[#0a0a12] overflow-hidden flex flex-col">
-      {/* Ambient background glow */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#e8475f]/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#3ecfcf]/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/3 rounded-full blur-3xl" />
-      </div>
+    <div className="w-full h-screen overflow-hidden flex flex-col" style={{ background: '#07070f' }}>
+      <style>{STYLES}</style>
 
-      {/* Progress Bar */}
+      {/* Progress Bar — Steps 2-5 */}
       {currentStep > 1 && currentStep < 6 && (
-        <div className="relative z-10 w-full px-6 pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <button onClick={handleBack} className="p-1.5 hover:bg-white/10 rounded-lg transition-all">
-              <ArrowLeft size={18} className="text-gray-400 hover:text-white" />
+        <div className="relative z-10 w-full px-5 pt-4 pb-2">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleBack}
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/[0.06] transition-colors"
+            >
+              <ArrowLeft size={16} className="text-white/50" />
             </button>
-            <div className="flex gap-1.5">
+            <div className="flex-1 flex gap-1">
               {[2, 3, 4, 5].map(step => (
-                <div
-                  key={step}
-                  className="h-1 rounded-full transition-all duration-500"
-                  style={{
-                    width: currentStep === step ? '32px' : '8px',
-                    background: currentStep >= step
-                      ? 'linear-gradient(90deg, #e8475f, #a855f7)'
-                      : 'rgba(255,255,255,0.1)'
-                  }}
-                />
+                <div key={step} className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-700 ease-out"
+                    style={{
+                      width: currentStep > step ? '100%' : currentStep === step ? '50%' : '0%',
+                      background: 'linear-gradient(90deg, #e8475f, #c44dff)',
+                    }}
+                  />
+                </div>
               ))}
             </div>
-            <span className="text-xs text-gray-500 font-mono">{currentStep - 1}/4</span>
+            <span className="text-[11px] text-white/25 font-mono w-6 text-right">{currentStep - 1}/4</span>
           </div>
         </div>
       )}
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col items-center justify-start relative z-10">
+      <div className="flex-1 overflow-y-auto px-5 flex flex-col items-center justify-start relative z-10">
         {currentStep === 1 && (
           <Step1Welcome
             onNext={handleNext}
@@ -290,7 +342,6 @@ export default function OnboardingFlow({ onComplete }) {
             onLogin={handleLogin}
           />
         )}
-
         {currentStep === 2 && (
           <Step2BasicInfo
             formData={formData}
@@ -301,7 +352,6 @@ export default function OnboardingFlow({ onComplete }) {
             setShowPassword={setShowPassword}
           />
         )}
-
         {currentStep === 3 && (
           <Step3Details
             formData={formData}
@@ -310,7 +360,6 @@ export default function OnboardingFlow({ onComplete }) {
             canProceed={canProceedStep3}
           />
         )}
-
         {currentStep === 4 && (
           <Step4Interests
             formData={formData}
@@ -319,7 +368,6 @@ export default function OnboardingFlow({ onComplete }) {
             canProceed={canProceedStep4}
           />
         )}
-
         {currentStep === 5 && (
           <Step5Socials
             formData={formData}
@@ -329,7 +377,6 @@ export default function OnboardingFlow({ onComplete }) {
             signupError={signupError}
           />
         )}
-
         {currentStep === 6 && (
           <Step6IpoLaunch
             name={formData.name}
@@ -345,26 +392,39 @@ export default function OnboardingFlow({ onComplete }) {
 }
 
 // ============================================================================
-// Reusable Input Component
+// Reusable Input
 // ============================================================================
 function FormInput({ icon: Icon, label, type = 'text', placeholder, value, onChange, suffix, valid, className = '' }) {
   const filled = value && value.length > 0
   return (
     <div className={className}>
       {label && (
-        <label className="flex items-center gap-1.5 text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wider">
+        <label className="flex items-center gap-1.5 text-[11px] font-semibold text-white/30 mb-2 uppercase tracking-[0.08em]">
           {label}
-          {valid && <Check size={12} className="text-emerald-400" />}
+          {valid && <Check size={10} className="text-emerald-400" />}
         </label>
       )}
       <div className="relative group">
-        {Icon && <Icon size={16} className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors ${filled ? 'text-[#e8475f]' : 'text-gray-600'}`} />}
+        {Icon && (
+          <Icon
+            size={15}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-200"
+            style={{ color: filled ? 'rgba(232,71,95,0.7)' : 'rgba(255,255,255,0.15)' }}
+          />
+        )}
         <input
           type={type}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className={`w-full ${Icon ? 'pl-10' : 'pl-4'} ${suffix ? 'pr-12' : 'pr-4'} py-3.5 rounded-xl bg-white/[0.04] border text-white placeholder-gray-600 focus:outline-none transition-all duration-300 text-sm ${filled ? 'border-[#e8475f]/40 bg-[#e8475f]/[0.03]' : 'border-white/[0.08] group-hover:border-white/20'} focus:border-[#e8475f]/60 focus:bg-[#e8475f]/[0.05]`}
+          className="w-full rounded-[14px] text-[14px] text-white placeholder-white/20 focus:outline-none transition-all duration-300"
+          style={{
+            padding: '14px 16px',
+            paddingLeft: Icon ? '40px' : '16px',
+            paddingRight: suffix ? '48px' : '16px',
+            background: filled ? 'rgba(232,71,95,0.04)' : 'rgba(255,255,255,0.03)',
+            border: `1px solid ${filled ? 'rgba(232,71,95,0.2)' : 'rgba(255,255,255,0.06)'}`,
+          }}
         />
         {suffix && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -380,123 +440,233 @@ function FormInput({ icon: Icon, label, type = 'text', placeholder, value, onCha
 // CTA Button
 // ============================================================================
 function CTAButton({ onClick, disabled, children, variant = 'primary', className = '' }) {
+  const base = 'w-full py-[15px] rounded-[16px] font-semibold text-[15px] text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2.5'
+
   const styles = {
     primary: {
-      background: disabled ? 'rgba(232, 71, 95, 0.2)' : 'linear-gradient(135deg, #e8475f 0%, #d63650 50%, #e8475f 100%)',
-      boxShadow: disabled ? 'none' : '0 4px 20px rgba(232, 71, 95, 0.4), 0 0 40px rgba(232, 71, 95, 0.1)',
+      background: disabled
+        ? 'rgba(232,71,95,0.15)'
+        : 'linear-gradient(135deg, #e8475f 0%, #c43a50 100%)',
+      boxShadow: disabled
+        ? 'none'
+        : '0 8px 32px rgba(232,71,95,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',
     },
     success: {
-      background: 'linear-gradient(135deg, #34d399 0%, #3ecfcf 100%)',
-      boxShadow: '0 4px 20px rgba(52, 211, 153, 0.4), 0 0 40px rgba(62, 207, 207, 0.1)',
+      background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+      boxShadow: '0 8px 32px rgba(34,197,94,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',
+    },
+    outline: {
+      background: 'transparent',
+      border: '1px solid rgba(255,255,255,0.1)',
+      boxShadow: 'none',
     }
   }
 
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`w-full py-4 rounded-2xl font-bold text-white text-base transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${className}`}
-      style={styles[variant]}
-    >
+    <button onClick={onClick} disabled={disabled} className={`${base} ${className}`} style={styles[variant]}>
       {children}
     </button>
   )
 }
 
 // ============================================================================
-// STEP 1: Welcome
+// Section Header
+// ============================================================================
+function SectionHeader({ icon: Icon, label, color = '#e8475f' }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <div className="w-[22px] h-[22px] rounded-md flex items-center justify-center" style={{ background: `${color}15` }}>
+        <Icon size={11} style={{ color }} />
+      </div>
+      <span className="text-[11px] font-semibold text-white/40 uppercase tracking-[0.1em]">{label}</span>
+    </div>
+  )
+}
+
+// ============================================================================
+// STEP 1 — Welcome (Complete Redesign)
 // ============================================================================
 function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEmail, loginPassword, setLoginPassword, loginError, loginLoading, onLogin }) {
-  const [showContent, setShowContent] = useState(false)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    setTimeout(() => setShowContent(true), 100)
+    requestAnimationFrame(() => setReady(true))
   }, [])
 
+  // Simulated live ticker data
+  const tickerData = [
+    { name: 'Sarah M.', price: 142, change: +4.2 },
+    { name: 'Alex K.', price: 128, change: +2.8 },
+    { name: 'Jordan T.', price: 156, change: -1.3 },
+    { name: 'Riley P.', price: 119, change: +6.1 },
+    { name: 'Morgan S.', price: 134, change: +3.5 },
+    { name: 'Casey L.', price: 147, change: -0.8 },
+  ]
+
   return (
-    <div className="w-full max-w-[430px] text-center py-8 flex flex-col items-center justify-center min-h-[80vh]">
-      {/* Logo */}
-      <div
-        className="mb-10 relative"
-        style={{
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.9)',
-          transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-      >
-        <div className="relative w-20 h-20 mx-auto">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#e8475f] via-purple-500 to-[#3ecfcf] rounded-2xl blur-xl opacity-30 animate-pulse" />
-          <div className="relative w-full h-full bg-gradient-to-br from-[#e8475f]/20 to-purple-500/20 rounded-2xl border border-[#e8475f]/30 flex items-center justify-center backdrop-blur-sm">
-            <Heart size={32} className="text-[#e8475f]" fill="currentColor" style={{ filter: 'drop-shadow(0 0 8px rgba(236, 72, 153, 0.6))' }} />
-            <TrendingUp size={24} className="text-[#3ecfcf] absolute -top-1 -right-1" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 212, 255, 0.6))' }} />
-          </div>
-        </div>
+    <div className="w-full max-w-[430px] flex flex-col min-h-[90vh] relative">
+      {/* Ambient light — subtle, elegant */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute w-[300px] h-[300px] rounded-full blur-[120px]"
+          style={{ top: '-80px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(232,71,95,0.08)' }}
+        />
+        <div
+          className="absolute w-[200px] h-[200px] rounded-full blur-[100px]"
+          style={{ bottom: '20%', right: '-40px', background: 'rgba(139,92,246,0.06)' }}
+        />
       </div>
 
-      {/* Title */}
-      <div
-        style={{
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s'
-        }}
-      >
-        <h1
-          className="text-5xl font-black tracking-tight mb-3"
+      {/* Top section */}
+      <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-8 pb-6">
+        {/* Logo mark */}
+        <div
+          className="mb-8 relative"
           style={{
-            background: 'linear-gradient(135deg, #e8475f 0%, #a855f7 40%, #3ecfcf 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
+            opacity: ready ? 1 : 0,
+            transform: ready ? 'scale(1)' : 'scale(0.8)',
+            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s'
           }}
         >
-          Evolve
-        </h1>
-        <p className="text-gray-400 text-base">Where connections evolve into value</p>
+          <div className="relative">
+            {/* Outer glow ring */}
+            <div
+              className="absolute inset-[-12px] rounded-[28px]"
+              style={{
+                background: 'linear-gradient(135deg, rgba(232,71,95,0.15), rgba(139,92,246,0.1))',
+                filter: 'blur(16px)',
+                animation: 'pulse-glow 3s ease-in-out infinite',
+              }}
+            />
+            {/* Icon container */}
+            <div
+              className="relative w-[72px] h-[72px] rounded-[22px] flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(145deg, rgba(232,71,95,0.12), rgba(139,92,246,0.08))',
+                border: '1px solid rgba(232,71,95,0.15)',
+                backdropFilter: 'blur(20px)',
+              }}
+            >
+              <div className="relative">
+                <TrendingUp size={28} style={{ color: '#e8475f', filter: 'drop-shadow(0 0 12px rgba(232,71,95,0.4))' }} />
+                <Heart
+                  size={13}
+                  fill="currentColor"
+                  className="absolute -bottom-0.5 -right-1.5"
+                  style={{ color: '#c44dff', filter: 'drop-shadow(0 0 6px rgba(196,77,255,0.5))' }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Title + tagline */}
+        <div
+          className="text-center mb-8"
+          style={{
+            opacity: ready ? 1 : 0,
+            transform: ready ? 'translateY(0)' : 'translateY(16px)',
+            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s'
+          }}
+        >
+          <h1
+            className="text-[42px] font-black tracking-[-0.02em] leading-none mb-3"
+            style={{
+              background: 'linear-gradient(135deg, #fff 20%, rgba(255,255,255,0.6) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            Evolve
+          </h1>
+          <p className="text-[15px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            Where your dating profile<br />
+            becomes your portfolio
+          </p>
+        </div>
+
+        {/* Live ticker strip — adds credibility + movement */}
+        <div
+          className="w-full overflow-hidden mb-8 relative"
+          style={{
+            opacity: ready ? 1 : 0,
+            transition: 'opacity 0.8s ease 0.45s',
+            maskImage: 'linear-gradient(90deg, transparent, black 15%, black 85%, transparent)',
+            WebkitMaskImage: 'linear-gradient(90deg, transparent, black 15%, black 85%, transparent)',
+          }}
+        >
+          <div className="flex gap-4 whitespace-nowrap" style={{ animation: 'ticker 20s linear infinite' }}>
+            {[...tickerData, ...tickerData].map((item, i) => (
+              <div key={i} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <span className="text-[11px] font-medium text-white/30">{item.name}</span>
+                <span className="text-[11px] font-bold text-white/50">${item.price}</span>
+                <span className={`text-[10px] font-bold ${item.change > 0 ? 'text-emerald-400/70' : 'text-red-400/70'}`}>
+                  {item.change > 0 ? '+' : ''}{item.change}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Value props */}
+        <div
+          className="w-full space-y-2.5 mb-8"
+          style={{
+            opacity: ready ? 1 : 0,
+            transform: ready ? 'translateY(0)' : 'translateY(12px)',
+            transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s'
+          }}
+        >
+          {[
+            { icon: BarChart3, text: 'AI scores every profile across 9 dimensions', color: '#e8475f' },
+            { icon: Flame, text: 'Trade on who you think is the best match', color: '#c44dff' },
+            { icon: Crown, text: 'Top traders unlock exclusive connections', color: '#f0b429' },
+          ].map(({ icon: Ic, text, color }, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-3 px-4 py-3 rounded-[14px]"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
+            >
+              <div className="w-8 h-8 rounded-[10px] flex items-center justify-center flex-shrink-0" style={{ background: `${color}10` }}>
+                <Ic size={15} style={{ color, opacity: 0.8 }} />
+              </div>
+              <span className="text-[13px] text-white/45 leading-snug">{text}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Stats Pills */}
+      {/* Bottom CTA section */}
       <div
-        className="flex gap-3 mt-8 mb-10"
+        className="relative z-10 pb-10 space-y-3"
         style={{
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s'
-        }}
-      >
-        <div className="px-4 py-2 rounded-full bg-[#e8475f]/10 border border-[#e8475f]/20">
-          <span className="text-[#e8475f] text-sm font-semibold">12K+ Traders</span>
-        </div>
-        <div className="px-4 py-2 rounded-full bg-[#3ecfcf]/10 border border-[#3ecfcf]/20">
-          <span className="text-[#3ecfcf] text-sm font-semibold">94% Accuracy</span>
-        </div>
-      </div>
-
-      {/* Login / Signup Toggle */}
-      <div
-        className="w-full space-y-4"
-        style={{
-          opacity: showContent ? 1 : 0,
-          transform: showContent ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.45s'
+          opacity: ready ? 1 : 0,
+          transform: ready ? 'translateY(0)' : 'translateY(16px)',
+          transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s'
         }}
       >
         {!showLogin ? (
           <>
             <CTAButton onClick={onNext}>
-              <Sparkles size={18} />
-              Launch Your IPO
+              Get Started
+              <ArrowRight size={16} />
             </CTAButton>
             <button
               onClick={() => setShowLogin(true)}
-              className="w-full py-3 text-sm text-gray-400 hover:text-white transition-colors font-medium"
+              className="w-full py-3 text-[13px] transition-colors"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
             >
-              Already have an account? <span className="text-[#e8475f]">Log in</span>
+              Already have an account? <span style={{ color: '#e8475f' }}>Log in</span>
             </button>
           </>
         ) : (
-          <div className="space-y-3 animate-fadeIn">
-            <h3 className="text-lg font-bold text-white mb-4">Welcome back</h3>
+          <div className="space-y-3 anim-fade-up">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-bold text-white">Welcome back</h3>
+              <button onClick={() => setShowLogin(false)} className="text-[12px] text-white/30 hover:text-white/50 transition-colors">
+                Sign up instead
+              </button>
+            </div>
             <FormInput
               icon={Mail}
               placeholder="Email address"
@@ -512,7 +682,7 @@ function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEma
               onChange={(e) => setLoginPassword(e.target.value)}
             />
             {loginError && (
-              <p className="text-xs text-red-400 text-left px-1">{loginError}</p>
+              <p className="text-[12px] text-red-400/80 px-1">{loginError}</p>
             )}
             <CTAButton
               onClick={onLogin}
@@ -520,60 +690,40 @@ function Step1Welcome({ onNext, showLogin, setShowLogin, loginEmail, setLoginEma
             >
               {loginLoading ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                   Logging in...
                 </div>
               ) : (
-                <>
-                  <ArrowRight size={18} />
-                  Log In
-                </>
+                <>Log In</>
               )}
             </CTAButton>
-            <button
-              onClick={() => setShowLogin(false)}
-              className="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors"
-            >
-              Don't have an account? <span className="text-[#e8475f]">Sign up</span>
-            </button>
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
-      `}</style>
     </div>
   )
 }
 
 // ============================================================================
-// STEP 2: Basic Info (Account + Personal)
+// STEP 2 — Basic Info
 // ============================================================================
 function Step2BasicInfo({ formData, onChange, onNext, canProceed, showPassword, setShowPassword }) {
   return (
-    <div className="w-full max-w-[430px] space-y-6 animate-fadeIn">
+    <div className="w-full max-w-[430px] py-6 space-y-6 anim-fade-up">
       <div>
-        <h2 className="text-2xl font-black text-white mb-1">Create your profile</h2>
-        <p className="text-sm text-gray-400">Our AI agents will use this to evaluate your market value</p>
+        <h2 className="text-[24px] font-bold text-white tracking-[-0.01em] mb-1">Create your profile</h2>
+        <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          Our 9 AI agents will evaluate your market value
+        </p>
       </div>
 
       {/* Account Section */}
       {supabaseReady && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-5 h-5 rounded bg-[#e8475f]/20 flex items-center justify-center">
-              <Lock size={11} className="text-[#e8475f]" />
-            </div>
-            <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">Account</span>
-          </div>
+        <div className="space-y-2.5">
+          <SectionHeader icon={Lock} label="Account" />
           <FormInput
             icon={Mail}
-            placeholder="alex@email.com"
+            placeholder="Email address"
             type="email"
             value={formData.email}
             onChange={(e) => onChange('email', e.target.value)}
@@ -581,39 +731,35 @@ function Step2BasicInfo({ formData, onChange, onNext, canProceed, showPassword, 
           />
           <FormInput
             icon={Lock}
-            placeholder="Min 6 characters"
+            placeholder="Password (min 6 characters)"
             type={showPassword ? 'text' : 'password'}
             value={formData.password}
             onChange={(e) => onChange('password', e.target.value)}
             valid={formData.password && formData.password.length >= 6}
             suffix={
-              <button onClick={() => setShowPassword(!showPassword)} className="text-gray-500 hover:text-gray-300 transition-colors">
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              <button onClick={() => setShowPassword(!showPassword)} className="text-white/20 hover:text-white/40 transition-colors">
+                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             }
           />
           {formData.password && formData.password.length > 0 && formData.password.length < 6 && (
-            <p className="text-xs text-amber-400 px-1">Password must be at least 6 characters</p>
+            <p className="text-[11px] text-amber-400/60 px-1">Password must be at least 6 characters</p>
           )}
         </div>
       )}
 
       {!supabaseReady && (
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-[#3ecfcf]/[0.06] border border-[#3ecfcf]/15">
-          <Zap size={16} className="text-[#3ecfcf] flex-shrink-0" />
-          <p className="text-xs text-cyan-300/80">Demo mode active. Run <code className="font-mono bg-white/10 px-1 py-0.5 rounded text-[#3ecfcf]">npm install</code> for real accounts.</p>
+        <div className="flex items-center gap-3 p-3 rounded-[14px]" style={{ background: 'rgba(62,207,207,0.04)', border: '1px solid rgba(62,207,207,0.08)' }}>
+          <Zap size={14} style={{ color: 'rgba(62,207,207,0.6)' }} />
+          <p className="text-[11px]" style={{ color: 'rgba(62,207,207,0.5)' }}>
+            Demo mode — run <code className="font-mono bg-white/5 px-1 rounded text-[10px]">npm install</code> for real accounts
+          </p>
         </div>
       )}
 
-      {/* Personal Info Section */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-5 h-5 rounded bg-purple-500/20 flex items-center justify-center">
-            <User size={11} className="text-purple-400" />
-          </div>
-          <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">Personal</span>
-        </div>
-
+      {/* Personal Info */}
+      <div className="space-y-2.5">
+        <SectionHeader icon={User} label="Personal" color="#a855f7" />
         <FormInput
           icon={User}
           placeholder="First name"
@@ -621,8 +767,7 @@ function Step2BasicInfo({ formData, onChange, onNext, canProceed, showPassword, 
           onChange={(e) => onChange('name', e.target.value)}
           valid={!!formData.name}
         />
-
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2.5">
           <FormInput
             icon={Calendar}
             placeholder="Age"
@@ -641,38 +786,39 @@ function Step2BasicInfo({ formData, onChange, onNext, canProceed, showPassword, 
         </div>
       </div>
 
-      {/* Security Note */}
+      {/* Privacy note */}
       <div className="flex items-center gap-2 px-1">
-        <Shield size={12} className="text-emerald-500/60" />
-        <p className="text-[10px] text-gray-500">Your data is encrypted and never shared without consent</p>
+        <Shield size={11} className="text-emerald-500/40" />
+        <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+          Your data is encrypted and never shared without consent
+        </p>
       </div>
 
       <CTAButton onClick={onNext} disabled={!canProceed}>
         Continue
-        <ChevronRight size={18} />
+        <ChevronRight size={15} />
       </CTAButton>
-
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
-      `}</style>
     </div>
   )
 }
 
 // ============================================================================
-// STEP 3: Details
+// STEP 3 — Details
 // ============================================================================
 function Step3Details({ formData, onChange, onNext, canProceed }) {
+  const filledCount = [formData.height, formData.education, formData.job, formData.company].filter(Boolean).length
+
   return (
-    <div className="w-full max-w-[430px] space-y-6 animate-fadeIn">
+    <div className="w-full max-w-[430px] py-6 space-y-6 anim-fade-up">
       <div>
-        <h2 className="text-2xl font-black text-white mb-1">Tell us more</h2>
-        <p className="text-sm text-gray-400">These details boost your market positioning</p>
+        <h2 className="text-[24px] font-bold text-white tracking-[-0.01em] mb-1">Your background</h2>
+        <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          These details boost your market positioning
+        </p>
       </div>
 
-      <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="space-y-2.5">
+        <div className="grid grid-cols-2 gap-2.5">
           <FormInput
             icon={Ruler}
             label="Height"
@@ -690,7 +836,6 @@ function Step3Details({ formData, onChange, onNext, canProceed }) {
             valid={!!formData.education}
           />
         </div>
-
         <FormInput
           icon={Briefcase}
           label="Job Title"
@@ -699,7 +844,6 @@ function Step3Details({ formData, onChange, onNext, canProceed }) {
           onChange={(e) => onChange('job', e.target.value)}
           valid={!!formData.job}
         />
-
         <FormInput
           icon={Building}
           label="Company"
@@ -710,67 +854,61 @@ function Step3Details({ formData, onChange, onNext, canProceed }) {
         />
       </div>
 
-      {/* Score Preview */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-purple-500/[0.06] to-[#e8475f]/[0.06] border border-purple-500/15">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <TrendingUp size={14} className="text-purple-400" />
-            <span className="text-xs text-gray-300 font-medium">Profile Completeness</span>
-          </div>
-          <span className="text-xs font-bold text-purple-400">
-            {[formData.height, formData.education, formData.job, formData.company].filter(Boolean).length}/4
+      {/* Progress indicator */}
+      <div className="p-4 rounded-[14px]" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.3)' }}>Profile strength</span>
+          <span className="text-[11px] font-bold" style={{ color: filledCount === 4 ? '#22c55e' : '#e8475f' }}>
+            {filledCount}/4
           </span>
         </div>
-        <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-purple-500 to-[#e8475f]"
-            style={{ width: `${[formData.height, formData.education, formData.job, formData.company].filter(Boolean).length * 25}%` }}
-          />
+        <div className="flex gap-1">
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  width: i < filledCount ? '100%' : '0%',
+                  background: 'linear-gradient(90deg, #e8475f, #c44dff)',
+                }}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
       <CTAButton onClick={onNext} disabled={!canProceed}>
         Continue
-        <ChevronRight size={18} />
+        <ChevronRight size={15} />
       </CTAButton>
-
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
-      `}</style>
     </div>
   )
 }
 
 // ============================================================================
-// STEP 4: Interests
+// STEP 4 — Interests
 // ============================================================================
 function Step4Interests({ formData, onToggle, onNext, canProceed }) {
   const count = formData.interests.length
 
   return (
-    <div className="w-full max-w-[430px] space-y-6 animate-fadeIn">
+    <div className="w-full max-w-[430px] py-6 space-y-5 anim-fade-up">
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-2xl font-black text-white mb-1">Your interests</h2>
-          <p className="text-sm text-gray-400">Pick at least 3 to calibrate your market</p>
+          <h2 className="text-[24px] font-bold text-white tracking-[-0.01em] mb-1">Your interests</h2>
+          <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            Pick at least 3 to calibrate your market
+          </p>
         </div>
-        {/* Counter */}
-        <div className="relative flex-shrink-0">
-          <svg width="48" height="48" viewBox="0 0 48 48" className="-rotate-90">
-            <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3" />
-            <circle
-              cx="24" cy="24" r="20" fill="none"
-              stroke={count >= 3 ? '#e8475f' : '#666'}
-              strokeWidth="3"
-              strokeDasharray={`${(count / Math.max(count, 3)) * 125.6} 125.6`}
-              strokeLinecap="round"
-              className="transition-all duration-500"
-            />
-          </svg>
-          <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${count >= 3 ? 'text-[#e8475f]' : 'text-gray-500'}`}>
-            {count}
-          </span>
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center text-[14px] font-bold transition-all duration-300"
+          style={{
+            background: count >= 3 ? 'rgba(232,71,95,0.1)' : 'rgba(255,255,255,0.03)',
+            border: `1.5px solid ${count >= 3 ? 'rgba(232,71,95,0.3)' : 'rgba(255,255,255,0.06)'}`,
+            color: count >= 3 ? '#e8475f' : 'rgba(255,255,255,0.2)',
+          }}
+        >
+          {count}
         </div>
       </div>
 
@@ -781,37 +919,33 @@ function Step4Interests({ formData, onToggle, onNext, canProceed }) {
             <button
               key={name}
               onClick={() => onToggle(name)}
-              className="flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-left text-sm font-medium transition-all duration-200 active:scale-[0.97]"
+              className="flex items-center gap-2.5 px-3.5 py-3 rounded-[12px] text-left text-[13px] font-medium transition-all duration-200 active:scale-[0.97]"
               style={{
-                background: selected ? 'rgba(232, 71, 95, 0.1)' : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${selected ? 'rgba(232, 71, 95, 0.4)' : 'rgba(255,255,255,0.06)'}`,
-                color: selected ? '#e8999f' : '#888',
-                boxShadow: selected ? '0 0 20px rgba(232, 71, 95, 0.15)' : 'none',
+                background: selected ? 'rgba(232,71,95,0.06)' : 'rgba(255,255,255,0.02)',
+                border: `1px solid ${selected ? 'rgba(232,71,95,0.25)' : 'rgba(255,255,255,0.04)'}`,
+                color: selected ? 'rgba(232,71,95,0.85)' : 'rgba(255,255,255,0.35)',
               }}
             >
-              <span className="text-lg">{emoji}</span>
-              <span>{name}</span>
-              {selected && <Check size={14} className="text-[#e8475f] ml-auto" />}
+              <span className="text-base">{emoji}</span>
+              <span className="flex-1">{name}</span>
+              {selected && <Check size={13} style={{ color: '#e8475f' }} />}
             </button>
           )
         })}
       </div>
 
-      <CTAButton onClick={onNext} disabled={!canProceed}>
-        Continue
-        <ChevronRight size={18} />
-      </CTAButton>
-
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
-      `}</style>
+      <div className="pt-1">
+        <CTAButton onClick={onNext} disabled={!canProceed}>
+          Continue
+          <ChevronRight size={15} />
+        </CTAButton>
+      </div>
     </div>
   )
 }
 
 // ============================================================================
-// STEP 5: Connect Socials
+// STEP 5 — Connect Socials
 // ============================================================================
 function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError }) {
   const socials = [
@@ -820,7 +954,6 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
       appName: 'instagram',
       icon: Instagram,
       color: '#E1306C',
-      gradient: 'from-[#e8475f] to-purple-600',
       description: 'Verify lifestyle & authenticity',
       boost: '+18%',
     },
@@ -829,7 +962,6 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
       appName: 'linkedin',
       icon: Linkedin,
       color: '#0A66C2',
-      gradient: 'from-blue-500 to-blue-700',
       description: 'Verify career & education',
       boost: '+22%',
     },
@@ -838,7 +970,6 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
       appName: 'strava',
       icon: Activity,
       color: '#FC4C02',
-      gradient: 'from-orange-500 to-red-600',
       description: 'Share fitness & health data',
       boost: '+12%',
     }
@@ -847,67 +978,78 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
   const connectedCount = formData.connectedApps.length
 
   return (
-    <div className="w-full max-w-[430px] space-y-6 animate-fadeIn">
+    <div className="w-full max-w-[430px] py-6 space-y-6 anim-fade-up">
       <div>
-        <h2 className="text-2xl font-black text-white mb-1">Verify your identity</h2>
-        <p className="text-sm text-gray-400">Verified profiles get more interest</p>
+        <h2 className="text-[24px] font-bold text-white tracking-[-0.01em] mb-1">Verify your identity</h2>
+        <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          Verified profiles get higher initial valuations
+        </p>
       </div>
 
-      {/* Trust Score Preview */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500/[0.06] to-[#3ecfcf]/[0.06] border border-emerald-500/15">
-        <div className="flex items-center justify-between mb-2">
+      {/* Trust Score */}
+      <div className="p-4 rounded-[14px]" style={{ background: 'rgba(34,197,94,0.03)', border: '1px solid rgba(34,197,94,0.08)' }}>
+        <div className="flex items-center justify-between mb-2.5">
           <div className="flex items-center gap-2">
-            <Shield size={14} className="text-emerald-400" />
-            <span className="text-xs text-gray-300 font-medium">Trust Score Boost</span>
+            <Shield size={13} style={{ color: 'rgba(34,197,94,0.6)' }} />
+            <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.3)' }}>Trust score boost</span>
           </div>
-          <span className="text-xs font-bold text-emerald-400">
+          <span className="text-[12px] font-bold" style={{ color: '#22c55e' }}>
             +{connectedCount === 0 ? '0' : connectedCount === 1 ? '18' : connectedCount === 2 ? '40' : '52'}%
           </span>
         </div>
-        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+        <div className="h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
           <div
-            className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-emerald-500 to-[#3ecfcf]"
-            style={{ width: `${(connectedCount / 3) * 100}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${(connectedCount / 3) * 100}%`,
+              background: 'linear-gradient(90deg, #22c55e, #16a34a)',
+            }}
           />
         </div>
       </div>
 
-      <div className="space-y-3">
-        {socials.map(({ name, appName, icon: Icon, color, gradient, description, boost }) => {
+      {/* Social cards */}
+      <div className="space-y-2.5">
+        {socials.map(({ name, appName, icon: Icon, color, description, boost }) => {
           const connected = formData.connectedApps.includes(appName)
           return (
             <button
               key={appName}
               onClick={() => onConnect(appName)}
-              className="w-full p-4 rounded-xl border transition-all duration-300 flex items-center gap-4 active:scale-[0.98]"
+              className="w-full p-4 rounded-[14px] transition-all duration-200 flex items-center gap-3.5 active:scale-[0.98]"
               style={{
-                background: connected ? `${color}08` : 'rgba(255,255,255,0.02)',
-                borderColor: connected ? `${color}40` : 'rgba(255,255,255,0.06)',
+                background: connected ? `${color}06` : 'rgba(255,255,255,0.02)',
+                border: `1px solid ${connected ? `${color}20` : 'rgba(255,255,255,0.04)'}`,
               }}
             >
-              <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0`}>
-                <Icon size={20} className="text-white" />
+              <div
+                className="w-10 h-10 rounded-[12px] flex items-center justify-center flex-shrink-0"
+                style={{ background: `${color}15` }}
+              >
+                <Icon size={18} style={{ color }} />
               </div>
               <div className="flex-1 text-left min-w-0">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-semibold text-white text-sm">{name}</h4>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                  <h4 className="font-semibold text-white text-[13px]">{name}</h4>
+                  <span
+                    className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={{ background: 'rgba(34,197,94,0.08)', color: 'rgba(34,197,94,0.7)', border: '1px solid rgba(34,197,94,0.1)' }}
+                  >
                     {boost}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>{description}</p>
               </div>
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
+                className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={{
-                  background: connected ? `${color}20` : 'rgba(255,255,255,0.05)',
-                  borderColor: connected ? `${color}50` : 'transparent',
+                  background: connected ? `${color}12` : 'rgba(255,255,255,0.03)',
                 }}
               >
                 {connected ? (
-                  <Check size={16} style={{ color }} />
+                  <Check size={14} style={{ color }} />
                 ) : (
-                  <ChevronRight size={16} className="text-gray-600" />
+                  <ChevronRight size={14} style={{ color: 'rgba(255,255,255,0.15)' }} />
                 )}
               </div>
             </button>
@@ -916,20 +1058,20 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
       </div>
 
       {signupError && (
-        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-          <p className="text-sm text-red-400">{signupError}</p>
+        <div className="p-3 rounded-[14px]" style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.12)' }}>
+          <p className="text-[12px] text-red-400/80">{signupError}</p>
         </div>
       )}
 
       <CTAButton onClick={onNext} disabled={isSigningUp}>
         {isSigningUp ? (
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
             Preparing your IPO...
           </div>
         ) : (
           <>
-            <Zap size={18} />
+            <Zap size={15} />
             Launch My IPO
           </>
         )}
@@ -938,21 +1080,17 @@ function Step5Socials({ formData, onConnect, onNext, isSigningUp, signupError })
       <button
         onClick={onNext}
         disabled={isSigningUp}
-        className="w-full py-2 text-sm text-gray-500 hover:text-gray-300 transition-colors disabled:opacity-50"
+        className="w-full py-2 text-[12px] transition-colors disabled:opacity-40"
+        style={{ color: 'rgba(255,255,255,0.2)' }}
       >
         Skip for now
       </button>
-
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
-      `}</style>
     </div>
   )
 }
 
 // ============================================================================
-// STEP 6: IPO Launch!
+// STEP 6 — IPO Launch
 // ============================================================================
 function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
   const [phase, setPhase] = useState(0)
@@ -973,27 +1111,31 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
     })
   }, [])
 
+  const confettiColors = ['#e8475f', '#c44dff', '#22c55e', '#f0b429', '#3ecfcf']
+
   return (
-    <div className="w-full max-w-[430px] text-center space-y-6 py-6 relative">
+    <div className="w-full max-w-[430px] text-center py-8 relative">
       {/* Confetti */}
       {phase >= 1 && (
         <>
-          {[...Array(24)].map((_, i) => (
+          {[...Array(20)].map((_, i) => (
             <div
               key={i}
               className="fixed pointer-events-none"
               style={{
                 left: `${Math.random() * 100}%`,
-                top: '-5px',
-                animation: `confettiFall ${2 + Math.random()}s ease-in forwards`,
-                animationDelay: `${Math.random() * 0.8}s`,
+                top: '-8px',
+                animation: `confettiFall ${2.5 + Math.random()}s ease-in forwards`,
+                animationDelay: `${Math.random() * 0.6}s`,
               }}
             >
               <div
-                className="w-1.5 h-1.5 rounded-full"
+                className="rounded-full"
                 style={{
-                  background: ['#e8475f', '#3ecfcf', '#a855f7', '#34d399', '#fbbf24'][Math.floor(Math.random() * 5)],
-                  opacity: 0.7,
+                  width: `${3 + Math.random() * 3}px`,
+                  height: `${3 + Math.random() * 3}px`,
+                  background: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+                  opacity: 0.5,
                 }}
               />
             </div>
@@ -1002,49 +1144,54 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
       )}
 
       {/* Header */}
-      <div style={{
+      <div className="mb-8" style={{
         opacity: phase >= 1 ? 1 : 0,
-        transform: phase >= 1 ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)',
+        transform: phase >= 1 ? 'translateY(0)' : 'translateY(24px)',
         transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
       }}>
-        <div className="text-4xl mb-3">🎉</div>
-        <h1 className="text-3xl font-black text-white">Your IPO is Live!</h1>
-        <p className="text-gray-400 mt-2">
-          Welcome to the market, <span className="text-[#e8475f] font-bold">{name}</span>
+        <div
+          className="w-14 h-14 rounded-full mx-auto mb-5 flex items-center justify-center"
+          style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.15)' }}
+        >
+          <Check size={24} style={{ color: '#22c55e' }} />
+        </div>
+        <h1 className="text-[28px] font-bold text-white tracking-[-0.01em] mb-1">You're live</h1>
+        <p className="text-[14px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          Welcome to the market, <span style={{ color: '#e8475f', fontWeight: 600 }}>{name}</span>
         </p>
       </div>
 
       {/* Price Card */}
       <div
-        className="p-6 rounded-2xl border"
+        className="p-6 rounded-[18px] mb-6"
         style={{
-          background: 'linear-gradient(135deg, rgba(62, 207, 207, 0.06) 0%, rgba(168, 85, 247, 0.06) 100%)',
-          borderColor: 'rgba(62, 207, 207, 0.2)',
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
           opacity: phase >= 2 ? 1 : 0,
-          transform: phase >= 2 ? 'translateY(0)' : 'translateY(20px)',
+          transform: phase >= 2 ? 'translateY(0)' : 'translateY(16px)',
           transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
-        <p className="text-[10px] uppercase text-gray-500 font-mono tracking-[0.2em] mb-2">
+        <p className="text-[10px] uppercase font-mono tracking-[0.15em] mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>
           Initial Market Price
         </p>
         <div
-          className="text-5xl font-black"
+          className="text-[48px] font-black leading-none tracking-[-0.02em]"
           style={{
-            background: 'linear-gradient(135deg, #3ecfcf, #a855f7)',
+            background: 'linear-gradient(135deg, #fff, rgba(255,255,255,0.7))',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
         >
           ${Math.round(animatedPrice)}
         </div>
-        <div className="flex items-center justify-center gap-2 mt-3">
-          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/10">
-            <TrendingUp size={12} className="text-emerald-400" />
-            <span className="text-xs font-bold text-emerald-400">New Listing</span>
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(34,197,94,0.08)' }}>
+            <TrendingUp size={11} style={{ color: '#22c55e' }} />
+            <span className="text-[11px] font-semibold" style={{ color: '#22c55e' }}>New Listing</span>
           </div>
-          <div className="px-2 py-1 rounded-full bg-white/5">
-            <span className="text-xs text-gray-400">500 $EVO</span>
+          <div className="px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.03)' }}>
+            <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.3)' }}>500 $EVO</span>
           </div>
         </div>
       </div>
@@ -1052,10 +1199,10 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
       {/* AI Score */}
       <div style={{
         opacity: phase >= 3 ? 1 : 0,
-        transform: phase >= 3 ? 'translateY(0)' : 'translateY(20px)',
+        transform: phase >= 3 ? 'translateY(0)' : 'translateY(16px)',
         transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
       }}>
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-5">
           <CircularGauge
             score={animatedScore}
             size={120}
@@ -1065,27 +1212,29 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
           />
         </div>
 
-        {/* Agent Analysis */}
-        <div className="space-y-2">
-          <p className="text-xs font-semibold text-gray-300 uppercase tracking-wider mb-3">
+        {/* Agent grid */}
+        <div className="mb-6">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>
             {AGENTS.length} AI Agents Analyzing
           </p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5">
             {AGENTS.map((agent) => (
               <div
                 key={agent.id}
-                className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.06]"
+                className="p-2 rounded-[10px]"
+                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
               >
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: agent.color }} />
-                  <span className="text-[10px] text-gray-400 truncate">{agent.shortName}</span>
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: agent.color }} />
+                  <span className="text-[9px] truncate" style={{ color: 'rgba(255,255,255,0.25)' }}>{agent.shortName}</span>
                 </div>
-                <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)' }}>
                   <div
                     className="h-full rounded-full transition-all duration-1000 ease-out"
                     style={{
                       width: `${agentProgress[agent.id] || 0}%`,
                       backgroundColor: agent.color,
+                      opacity: 0.7,
                     }}
                   />
                 </div>
@@ -1097,47 +1246,42 @@ function Step6IpoLaunch({ name, price, score, percentile, onComplete }) {
 
       {/* Market Position */}
       <div
-        className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]"
+        className="p-4 rounded-[14px] mb-6"
         style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.04)',
           opacity: phase >= 4 ? 1 : 0,
-          transform: phase >= 4 ? 'translateY(0)' : 'translateY(20px)',
+          transform: phase >= 4 ? 'translateY(0)' : 'translateY(16px)',
           transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
-        <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Your Market Position</p>
+        <p className="text-[10px] uppercase tracking-[0.1em] mb-1" style={{ color: 'rgba(255,255,255,0.2)' }}>Your Market Position</p>
         <p
-          className="text-2xl font-black"
+          className="text-[24px] font-bold"
           style={{
-            background: 'linear-gradient(135deg, #34d399, #3ecfcf)',
+            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
         >
           Top {percentile}%
         </p>
-        <p className="text-[10px] text-gray-500 mt-1">Of all new listings this month</p>
+        <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.15)' }}>Of all new listings this month</p>
       </div>
 
       {/* CTA */}
       <div
-        className="space-y-3 pt-4"
+        className="space-y-3"
         style={{
           opacity: phase >= 4 ? 1 : 0,
-          transform: phase >= 4 ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s'
+          transition: 'opacity 0.6s ease 0.2s'
         }}
       >
         <CTAButton onClick={onComplete} variant="success">
-          <TrendingUp size={18} />
+          <TrendingUp size={16} />
           Start Trading
         </CTAButton>
       </div>
-
-      <style>{`
-        @keyframes confettiFall {
-          to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-      `}</style>
     </div>
   )
 }
